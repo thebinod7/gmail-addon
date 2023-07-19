@@ -5,10 +5,10 @@ const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
 const MONDAY_API_ENDPOINT = process.env.MONDAY_API_ENDPOINT;
 const OFFSITE_API_ENDPOINT = process.env.OFFSITE_ENDPOINT;
 const OFFSITE_API_SECRET = process.env.OFFSITE_API_SECRET;
-const OFFSITE_INSTALL_URL = process.env.MONDAY_SHARE_URL;
 
-import { HomepageCard } from './cards';
+import { HomepageCard, AuthCard, SaveContactCard } from './cards';
 import { getToken, saveToken } from './utils';
+import { fetchMondayAccessToken } from './services/monday';
 
 function onDefaultHomePageOpen() {
 	console.log('Homepage!!!');
@@ -77,33 +77,6 @@ function doGet(e) {
 	console.log('Params=>', params);
 }
 
-function fetchMondayAccessToken(code) {
-	var service = getOAuthService();
-	var redirect_uri = service.getRedirectUri();
-	var data = {
-		code: code,
-		client_id: MONDAY_CLIENT_ID,
-		client_secret: MONDAY_CLIENT_SECRET,
-		redirect_uri: redirect_uri
-	};
-	var queryString = Object.keys(data)
-		.map(function (key) {
-			return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-		})
-		.join('&');
-
-	var fullURL = MONDAT_ACCESS_TOKEN_URL + '?' + queryString;
-	var options = {
-		method: 'post',
-		contentType: 'application/x-www-form-urlencoded',
-		muteHttpExceptions: true
-	};
-	var response = UrlFetchApp.fetch(fullURL, options);
-	if (!response) return null;
-	var json = JSON.parse(response);
-	return json.access_token;
-}
-
 function authCallback(request) {
 	var code = request.parameter.code;
 	var access_token = fetchMondayAccessToken(code);
@@ -140,24 +113,6 @@ function saveContactCard() {
 function updateContactCard() {
 	var msg = CardService.newTextParagraph().setText('Update contact!' + OFFSITE_API_ENDPOINT);
 	var updatedCard = CardService.newCardBuilder().addSection(CardService.newCardSection().addWidget(msg)).build();
-	return updatedCard;
-}
-
-function authenticationCard() {
-	var btnInstall = CardService.newTextButton()
-		.setText('Install Monday')
-		.setOpenLink(CardService.newOpenLink().setUrl(OFFSITE_INSTALL_URL).setOpenAs(CardService.OpenAs.FULL_SIZE))
-		.setTextButtonStyle(CardService.TextButtonStyle.TEXT);
-
-	var btnAuth = CardService.newTextButton()
-		.setText('Login to Monday')
-		.setOnClickAction(CardService.newAction().setFunctionName('handleLoginClick'));
-
-	var msg = CardService.newTextParagraph().setText('Install Monday app if you are a first time user.');
-
-	var updatedCard = CardService.newCardBuilder()
-		.addSection(CardService.newCardSection().addWidget(msg).addWidget(btnInstall).addWidget(btnAuth))
-		.build();
 	return updatedCard;
 }
 
@@ -279,7 +234,9 @@ function onGmailMessageOpen(e) {
 	var currentCard = 'save';
 	var accessToken = getToken();
 	console.log('MondayTOKEN==>>', accessToken);
-	if (!accessToken) return authenticationCard();
+	if (!accessToken) return AuthCard();
+
+	return SaveContactCard();
 
 	var account = fetchMondayAccountDetails(accessToken);
 	var accountId = account.account_id.toString();
@@ -301,8 +258,7 @@ function onGmailMessageOpen(e) {
 		}
 	}
 
-	if (currentCard === 'save') return saveContactCard('save');
-	if (currentCard === 'update') return updateContactCard('update');
+	return saveContactCard('save');
 
 	var card = CardService.newCardBuilder();
 	var section = CardService.newCardSection();
@@ -382,3 +338,5 @@ global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
 global.authCallback = authCallback;
+global.handleLogoutClick = handleLogoutClick;
+global.getOAuthService = getOAuthService;
