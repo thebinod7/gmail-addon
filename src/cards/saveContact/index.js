@@ -1,5 +1,6 @@
-import { fieldOrderRealign, createFormInputByType } from '../../utils';
-export default function saveContactCard({ allowedFields }) {
+import { fieldOrderRealign, createFormInputByType, appendEmailAndItemName } from '../../utils';
+
+export default function saveContactCard({ email, itemName, allowedFields }) {
 	// Render fields
 	// Populate email and itemName fields (Append values)
 	// Handle submit form
@@ -9,9 +10,10 @@ export default function saveContactCard({ allowedFields }) {
 	const section = CardService.newCardSection().setHeader('Save Contact').addWidget(cardDivider);
 
 	const ordered_fields = fieldOrderRealign(allowedFields);
-	for (let f of ordered_fields) {
+	const appended = appendEmailAndItemName({ fields: ordered_fields, email, itemName });
+	console.log('appended==>', appended);
+	for (let f of appended) {
 		var _input = createFormInputByType(f);
-		console.log('IN==>', _input);
 		if (_input) widgets = section.addWidget(_input);
 	}
 

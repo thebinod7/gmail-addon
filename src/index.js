@@ -6,7 +6,14 @@ const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
 import { HomepageCard, AuthCard, SaveContactCard, UpdateContactCard, MessageCard, AuthorizationCard } from './cards';
 import { fetchMondayAccessToken, fetchMondayAccountDetails, fetchBoardColumnValues } from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings } from './services/offsite';
-import { getToken, saveToken, extractEmailAddress, findEmailInBoardRow, createFormInputByType } from './utils';
+import {
+	getToken,
+	saveToken,
+	extractEmailAddress,
+	findEmailInBoardRow,
+	createFormInputByType,
+	extractCharactersBeforeSymbol
+} from './utils';
 import { SAMPLE_DATA } from './constants';
 
 const onDefaultHomePageOpen = () => HomepageCard();
@@ -42,20 +49,21 @@ function handleLogoutClick() {
 	return MessageCard('Logged out successfully!');
 }
 
-function fetchGmailSender(e) {
-	let email;
+function fetchGmailSenderAndEmail(e) {
+	let email = '';
+	let itemName = '';
 	const messageId = e.messageMetadata.messageId;
-	//  const message = GmailApp.getMessageById(messageId);
 	const thread = GmailApp.getMessageById(messageId).getThread();
 	const messages = thread.getMessages();
 	for (let i = 0; i < messages.length; i++) {
 		let sender = messages[i].getFrom();
+		itemName = extractCharactersBeforeSymbol(sender, '<');
 		let emailAddr = extractEmailAddress(sender);
 		email = emailAddr;
 		let body = messages[i].getBody();
 		console.log('Text==>', body);
 	}
-	return email;
+	return { email, itemName };
 }
 
 function onGmailMessageOpen(e) {
@@ -67,23 +75,23 @@ function onGmailMessageOpen(e) {
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	if (!settings || !settings.data) return MessageCard('No settings found!');
 	const { allowedFields, board } = settings.data;
-	const senderEmail = fetchGmailSender(e);
+	const { email, itemName } = fetchGmailSenderAndEmail(e);
 	// Search in database
-	const dbResponse = getBoardItemByEmail(senderEmail); // Search email inside our DB
+	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
 	console.log('DBRES=>', dbResponse);
 	const boardIds = [board.value];
 	const boardResponse = fetchBoardColumnValues(boardIds); // Search email inside Monday board
 	const rows = boardResponse.data.boards[0].items;
 	console.log('ROWS:', rows);
 	for (let i = 0; i < rows.length; i++) {
-		let found = findEmailInBoardRow(rows[i], senderEmail);
+		let found = findEmailInBoardRow(rows[i], email);
 		if (found) {
 			return UpdateContactCard();
 			// append values/sanitize forms and render;
 		}
 	}
 
-	return SaveContactCard({ allowedFields });
+	return SaveContactCard({ allowedFields, email, itemName });
 
 	var card = CardService.newCardBuilder();
 	var section = CardService.newCardSection();
