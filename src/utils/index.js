@@ -1,3 +1,8 @@
+import { BOARD_COLUMNS } from '../constants';
+
+const { NAME, DATE, NUMBERS, EMAIL, COLOR, DROPDOWN, PHONE, LINK, TEXT, BOARD_RELATION, LOOKUP, PERSON } =
+	BOARD_COLUMNS;
+
 export const saveToken = token => {
 	var properties = PropertiesService.getUserProperties();
 	properties.setProperty('access_token', token);
@@ -33,26 +38,60 @@ export const findEmailInBoardRow = (row, email) => {
 };
 
 export const createFormInputByType = input => {
-	var title = input.title;
-	var fieldName = input.id;
+	const title = input.title;
+	const fieldName = input.id;
 	switch (input.type) {
-		case 'text': {
-			var textInput = CardService.newTextInput().setFieldName(fieldName).setTitle(title);
+		case TEXT: {
+			const textInput = CardService.newTextInput().setFieldName(fieldName).setTitle(title);
 			return textInput;
 		}
-		case 'dropdown': {
-			var dropdown = CardService.newSelectionInput()
+		case EMAIL: {
+			const textInput = CardService.newTextInput().setFieldName(fieldName).setTitle(title);
+			return textInput;
+		}
+		case NAME: {
+			const textInput = CardService.newTextInput().setFieldName(fieldName).setTitle(title);
+			return textInput;
+		}
+		case PERSON: {
+			const dropdown = CardService.newSelectionInput()
 				.setType(CardService.SelectionInputType.DROPDOWN)
-				.setTitle('A group of radio buttons.')
+				.setTitle(title)
 				.setFieldName(fieldName)
-				.addItem('Option 1', 'option_1', true)
-				.addItem('Option 2', 'option_2', false)
-				.addItem('Option 3', 'option_3', false);
+				.addItem('Nir Ofir', 'option_1', true)
+				.addItem('Binod Chaudhary', 'option_2', false);
 
 			return dropdown;
 		}
 
 		default:
-			return '';
+			const textInput = CardService.newTextInput().setFieldName(fieldName).setTitle(title);
+			return textInput;
 	}
+};
+
+export const fieldOrderRealign = allowedFields => {
+	const sortedEmailFields = [];
+	const sortedConnectFields = [];
+
+	const itemNameField = allowedFields.find(f => f.type === NAME);
+
+	const emailFields = allowedFields.filter(f => f.type === EMAIL);
+	if (!emailFields.length) return allowedFields;
+	for (let field of emailFields) {
+		sortedEmailFields.push(field);
+	}
+
+	const connectFields = allowedFields.filter(f => f.type === BOARD_RELATION);
+	if (connectFields.length) {
+		for (let field of connectFields) {
+			sortedConnectFields.push(field);
+		}
+	}
+
+	const filterNameField = allowedFields.filter(f => f.type !== NAME);
+	const filterEmailField = filterNameField.filter(f => f.type !== EMAIL);
+	const filterConnectFields = filterEmailField.filter(f => f.type !== BOARD_RELATION);
+
+	return [itemNameField, ...sortedEmailFields, ...filterConnectFields, ...sortedConnectFields];
 };

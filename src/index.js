@@ -62,20 +62,19 @@ function onGmailMessageOpen(e) {
 	const accessToken = getToken();
 	if (!accessToken) return AuthCard();
 
-	const account = fetchMondayAccountDetails(accessToken);
+	const account = fetchMondayAccountDetails();
 	const accountId = account.account_id.toString();
-	const settings = fetchGmailSettings(accountId);
+	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	if (!settings || !settings.data) return MessageCard('No settings found!');
-	const { data: settingsData } = settings;
-	console.log('Settings=>', settingsData);
-	const allowedFields = settings.data.allowedFields;
+	const { allowedFields, board } = settings.data;
 	const senderEmail = fetchGmailSender(e);
 	// Search in database
-	const dbResponse = getBoardItemByEmail(senderEmail);
+	const dbResponse = getBoardItemByEmail(senderEmail); // Search email inside our DB
 	console.log('DBRES=>', dbResponse);
-	const boardIds = [settings.data.board.value];
-	const boardResponse = fetchBoardColumnValues(accessToken, boardIds);
+	const boardIds = [board.value];
+	const boardResponse = fetchBoardColumnValues(boardIds); // Search email inside Monday board
 	const rows = boardResponse.data.boards[0].items;
+	console.log('ROWS:', rows);
 	for (let i = 0; i < rows.length; i++) {
 		let found = findEmailInBoardRow(rows[i], senderEmail);
 		if (found) {
@@ -84,7 +83,7 @@ function onGmailMessageOpen(e) {
 		}
 	}
 
-	return SaveContactCard();
+	return SaveContactCard({ allowedFields });
 
 	var card = CardService.newCardBuilder();
 	var section = CardService.newCardSection();
