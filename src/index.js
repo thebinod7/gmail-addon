@@ -9,10 +9,7 @@ import { getBoardItemByEmail, fetchGmailSettings } from './services/offsite';
 import { getToken, saveToken, extractEmailAddress, findEmailInBoardRow, createFormInputByType } from './utils';
 import { SAMPLE_DATA } from './constants';
 
-function onDefaultHomePageOpen() {
-	console.log('Homepage!!!');
-	return HomepageCard();
-}
+const onDefaultHomePageOpen = () => HomepageCard();
 
 function doGet(e) {
 	var params = e.parameter;
@@ -46,16 +43,16 @@ function handleLogoutClick() {
 }
 
 function fetchGmailSender(e) {
-	var email;
-	var messageId = e.messageMetadata.messageId;
-	//  var message = GmailApp.getMessageById(messageId);
-	var thread = GmailApp.getMessageById(messageId).getThread();
-	var messages = thread.getMessages();
-	for (var i = 0; i < messages.length; i++) {
-		var sender = messages[i].getFrom();
-		var emailAddr = extractEmailAddress(sender);
+	let email;
+	const messageId = e.messageMetadata.messageId;
+	//  const message = GmailApp.getMessageById(messageId);
+	const thread = GmailApp.getMessageById(messageId).getThread();
+	const messages = thread.getMessages();
+	for (let i = 0; i < messages.length; i++) {
+		let sender = messages[i].getFrom();
+		let emailAddr = extractEmailAddress(sender);
 		email = emailAddr;
-		var body = messages[i].getBody();
+		let body = messages[i].getBody();
 		console.log('Text==>', body);
 	}
 	return email;
@@ -63,13 +60,14 @@ function fetchGmailSender(e) {
 
 function onGmailMessageOpen(e) {
 	const accessToken = getToken();
-	console.log('MondayTOKEN==>>', accessToken);
 	if (!accessToken) return AuthCard();
 
 	const account = fetchMondayAccountDetails(accessToken);
 	const accountId = account.account_id.toString();
 	const settings = fetchGmailSettings(accountId);
 	if (!settings || !settings.data) return MessageCard('No settings found!');
+	const { data: settingsData } = settings;
+	console.log('Settings=>', settingsData);
 	const allowedFields = settings.data.allowedFields;
 	const senderEmail = fetchGmailSender(e);
 	// Search in database
@@ -119,8 +117,8 @@ function handleLoginClick(e) {
 	return AuthorizationCard();
 }
 
-function handleFormSubmit(e) {
-	// console.log("FORM=>", e.formInput);
+function handleSaveContact(e) {
+	console.log('FORM_INPUT=>', e.formInput);
 	const message = CardService.newTextParagraph().setText('Form submitted successfully!');
 	const updatedCard = CardService.newCardBuilder()
 		.addSection(CardService.newCardSection().addWidget(message))
@@ -134,3 +132,4 @@ global.handleLoginClick = handleLoginClick;
 global.authCallback = authCallback;
 global.handleLogoutClick = handleLogoutClick;
 global.getOAuthService = getOAuthService;
+global.handleSaveContact = handleSaveContact;

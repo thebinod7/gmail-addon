@@ -1,15 +1,20 @@
 export default function saveContactCard() {
-	const card = CardService.newCardBuilder();
-	const section = CardService.newCardSection();
+	const cardDivider = CardService.newDivider();
+	const section = CardService.newCardSection().setHeader('Save Contact').addWidget(cardDivider);
 
-	const formAction = CardService.newAction().setFunctionName('handleFormSubmit');
-
-	const submitButton = CardService.newTextButton().setText('Submit').setOnClickAction(formAction);
+	const itemInput = CardService.newTextInput().setFieldName('itemName').setTitle('Item Name');
+	const emailInput = CardService.newTextInput().setFieldName('email').setTitle('Email');
 
 	const btnLogout = CardService.newTextButton()
 		.setText('Logout')
 		.setOnClickAction(CardService.newAction().setFunctionName('handleLogoutClick'));
 
-	card.addSection(section.addWidget(submitButton).addWidget(btnLogout));
-	return card.build();
+	const formAction = CardService.newAction().setFunctionName('handleSaveContact');
+	const btnSubmit = CardService.newTextButton().setText('Submit').setOnClickAction(formAction);
+
+	const card = CardService.newCardBuilder()
+		.addSection(section.addWidget(itemInput).addWidget(emailInput).addWidget(btnSubmit).addWidget(btnLogout))
+		.build();
+
+	return card;
 }
