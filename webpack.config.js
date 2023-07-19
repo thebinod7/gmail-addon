@@ -1,17 +1,12 @@
-/**
- * @file webpack.config.js
- * @author Amit Agarwal
- * @email amit@labnol.org
- *
- * Google Apps Script Starter Kit
- * https://github.com/labnol/apps-script-starter
- */
-
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const GasPlugin = require('gas-webpack-plugin');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
+
+const env = process.env.NODE_ENV || 'dev';
+
 
 const getSrcPath = (filePath) => {
   const src = path.resolve(__dirname, 'src');
@@ -90,16 +85,15 @@ module.exports = {
           to: '[name][ext]',
           noErrorOnMissing: true,
           info: { minimized: true },
-        },
-        {
-          from: getSrcPath('../node_modules/apps-script-oauth2/dist/OAuth2.gs'),
-          to: 'OAuth2.js',
-        },
+        }
       ],
     }),
     new GasPlugin({
       comments: false,
       source: 'digitalinspiration.com',
     }),
+    new Dotenv({
+			path: `./.env.${env}`
+		})
   ],
 };

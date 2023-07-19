@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "watch": "webpack --watch",
-    "build": "webpack",
+    "build": "NODE_ENV=dev webpack",
     "format": "prettier --write dist/code.js",
     "postbuild": "npm run format",
     "upload": "npx clasp push",
@@ -29,6 +29,7 @@
     "babel-loader": "^9.1.2",
     "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
+    "dotenv-webpack": "^8.0.1",
     "gas-webpack-plugin": "^2.3.0",
     "jest": "^29.5.0",
     "npm-watch": "^0.11.0",
