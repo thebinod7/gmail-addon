@@ -1,0 +1,40 @@
+{
+  "name": "apps-script-starter",
+  "version": "11.0.0",
+  "description": "Gmail addon with webpack and clasp enabled",
+  "license": "MIT",
+  "scripts": {
+    "watch": "webpack --watch",
+    "build": "webpack",
+    "format": "prettier --write dist/code.js",
+    "postbuild": "npm run format",
+    "upload": "npx clasp push",
+    "deploy": "npm run build && npm run upload",
+    "test": "jest"
+  },
+  "keywords": [
+    "google-apps-script",
+    "google-workspace"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@babel/eslint-parser": "^7.21.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
+    "@google/clasp": "^2.4.2",
+    "@types/google-apps-script": "^1.0.59",
+    "@types/google-apps-script-oauth2": "^38.0.0",
+    "@types/google.picker": "^0.0.39",
+    "@types/jest": "^29.5.0",
+    "babel-loader": "^9.1.2",
+    "copy-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3",
+    "gas-webpack-plugin": "^2.3.0",
+    "jest": "^29.5.0",
+    "npm-watch": "^0.11.0",
+    "prettier": "^2.8.7",
+    "terser-webpack-plugin": "^5.3.7",
+    "webpack": "^5.76.3",
+    "webpack-cli": "^5.0.1"
+  }
+}

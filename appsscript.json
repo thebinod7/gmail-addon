@@ -1,0 +1,62 @@
+{
+  "timeZone": "America/New_York",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "OAuth2",
+        "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF",
+        "version": "43"
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "addOns": {
+    "common": {
+      "homepageTrigger": {
+        "runFunction": "onDefaultHomePageOpen",
+        "enabled": true
+      },
+      "layoutProperties": {
+        "primaryColor": "#fbbc04",
+        "secondaryColor": "#d68617"
+      },
+      "logoUrl": "https://app.addoffsite.com/img/logos/128x128.png",
+      "name": "My Addon",
+      "openLinkUrlPrefixes": [
+        "https://mail.google.com/",
+        "https://www.example.com/",
+        "https://auth.monday.com/oauth2/authorize",
+        "https://499e-202-51-80-178.ngrok-free.app"
+      ],
+      "universalActions": [
+        {
+          "label": "Open settings",
+          "runFunction": "getSettingsCard"
+        },
+        {
+          "label": "Open Help URL",
+          "openLink": "https://www.example.com/help"
+        }
+      ],
+      "useLocaleFromApp": true
+    },
+    "gmail": {
+      "composeTrigger": {
+        "selectActions": [
+          {
+            "text": "Add images to email",
+            "runFunction": "getInsertImageComposeCards"
+          }
+        ],
+        "draftAccess": "METADATA"
+      },
+      "contextualTriggers": [
+        {
+          "unconditional": {},
+          "onTriggerFunction": "onGmailMessageOpen"
+        }
+      ]
+    }
+  }
+}
