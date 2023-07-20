@@ -6,7 +6,16 @@ const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
 import { HomepageCard, AuthCard, SaveContactCard, UpdateContactCard, MessageCard, AuthorizationCard } from './cards';
 import { fetchMondayAccessToken, fetchMondayAccountDetails, fetchBoardColumnValues } from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings } from './services/offsite';
-import { getToken, saveToken, extractEmailAddress, findEmailInBoardRow, extractCharactersBeforeSymbol } from './utils';
+import {
+	getToken,
+	saveToken,
+	extractEmailAddress,
+	findEmailInBoardRow,
+	extractCharactersBeforeSymbol,
+	extractObjectKeysAndValues,
+	sanitizInputPayload,
+	createBoardQuery
+} from './utils';
 import { SAMPLE_DATA } from './constants';
 
 const onDefaultHomePageOpen = () => HomepageCard();
@@ -93,7 +102,17 @@ function handleLoginClick(e) {
 }
 
 function handleSaveContact(e) {
-	console.log('FORM_INPUT=>', e.formInput);
+	console.log('Input=>', e.formInput);
+	// Get inputType by matching ID (text1 => text)
+	// Create board payload (columnType,columnId, value)
+	// Save to board
+	// Save to DB (Remove sample data before save)
+	const { keys, values } = extractObjectKeysAndValues(e.formInput);
+	console.log('KEYS==>', keys);
+	console.log('Values=>', values);
+	const sanitizedData = sanitizInputPayload({ keys, values });
+	console.log('Sanitized=>', sanitizedData);
+	// Get itemName, itemID, boardID
 	const message = CardService.newTextParagraph().setText('Form submitted successfully!');
 	const updatedCard = CardService.newCardBuilder()
 		.addSection(CardService.newCardSection().addWidget(message))

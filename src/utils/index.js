@@ -154,3 +154,91 @@ export const fieldOrderRealign = allowedFields => {
 
 	return [itemNameField, ...sortedEmailFields, ...filterConnectFields, ...sortedConnectFields];
 };
+
+export const extractObjectKeysAndValues = obj => {
+	let keys = [];
+	let values = [];
+	if (!obj) return { keys, values };
+	keys = Object.keys(obj);
+	values = Object.values(obj);
+	return { keys, values };
+};
+
+export const sanitizInputPayload = ({ keys, values }) => {
+	let result = [];
+	for (let i = 0; i < keys.length; i++) {
+		let d = {
+			columnType: getColumTypeByID(keys[i]),
+			columnId: keys[i],
+			value: values[i]
+		};
+		result.push(d);
+	}
+	return result;
+};
+
+const getColumTypeByID = id => {
+	const hasName = id.includes(NAME);
+	if (hasName) return NAME;
+
+	const hasText = id.includes(TEXT);
+	if (hasText) return TEXT;
+
+	const hasEmail = id.includes(EMAIL);
+	if (hasEmail) return EMAIL;
+
+	const hasPhone = id.includes(PHONE);
+	if (hasPhone) return PHONE;
+
+	const hasLink = id.includes(LINK);
+	if (hasLink) return LINK;
+
+	const hasDate = id.includes(DATE);
+	if (hasDate) return DATE;
+
+	const hasPerson = id.includes(PERSON);
+	if (hasPerson) return PERSON;
+
+	const hasColor = id.includes(COLOR);
+	if (hasColor) return COLOR;
+
+	const hasNumber = id.includes(NUMBERS);
+	if (hasNumber) return NUMBERS;
+
+	const hasFiles = id.includes(FILES);
+	if (hasFiles) return FILES;
+
+	return TEXT;
+};
+
+export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload }) => {
+	let columnValues = `\\"name\\": \\"${itemName}\\"`;
+	for (let t of boardPayload) {
+		if (t.columnType === TEXT) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
+		if (t.columnType === DATE) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
+		if (t.columnType === LONG_TEXT) columnValues += `,\\"${t.columnId}\\": {\\"text\\" : \\"${t.value || ''}\\"}`;
+		if (t.columnType === EMAIL)
+			columnValues += `,\\"${t.columnId}\\": {\\"email\\" : \\"${t.value || ''}\\", \\"text\\": \\"${
+				t.value || ''
+			}\\"}`;
+		if (t.columnType === LINK)
+			columnValues += `,\\"${t.columnId}\\": {\\"url\\" : \\"${t.value || ''}\\", \\"text\\": \\"Open Link\\"}`;
+		if (t.columnType === NUMBERS) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
+		if (t.columnType === PHONE) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
+		if (t.columnType === RATING) columnValues += `,\\"${t.columnId}\\": {\\"rating\\" : ${t.value || 0}}`;
+		if (t.columnType === COLOR) columnValues += `,\\"${t.columnId}\\": \\"${t.value || []}\\"`;
+		if (t.columnType === DROPDOWN) {
+			const data = createDropdownPayload(t.value || []);
+			columnValues += `,\\"${t.columnId}\\":{\\"labels\\": [${data}]}`;
+		}
+		if (t.columnType === PERSON && t.value && t.value.length) {
+			let usersList = createPersonPayload(t.value);
+			columnValues += `,\\"${t.columnId}\\": {\\"personsAndTeams\\" : [${usersList}]}`;
+		}
+	}
+	return `mutation {
+		change_multiple_column_values (item_id: ${itemId}, board_id: ${boardId}, column_values: "{${columnValues}}") {
+		  id
+		}
+	  }`;
+};
