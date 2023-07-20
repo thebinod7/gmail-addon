@@ -1,6 +1,7 @@
 import { BOARD_COLUMNS } from '../constants';
+import { DateInput, EmailInput, FileInput, LinkInput, PhoneInput, StatusInput, TextInput } from '../formInputs';
 
-const { NAME, DATE, NUMBERS, EMAIL, COLOR, DROPDOWN, PHONE, LINK, TEXT, BOARD_RELATION, LOOKUP, PERSON } =
+const { NAME, DATE, NUMBERS, EMAIL, COLOR, DROPDOWN, PHONE, LINK, TEXT, BOARD_RELATION, LOOKUP, FILES, PERSON } =
 	BOARD_COLUMNS;
 
 export const appendEmailAndItemName = ({ fields, itemName, email }) => {
@@ -94,41 +95,37 @@ export const getDefaultValueByColumnType = columnsWithValue => {
 };
 
 export const createFormInputByType = input => {
-	const title = input.title;
-	const fieldName = input.id;
 	switch (input.type) {
+		case NAME: {
+			return TextInput(input);
+		}
 		case TEXT: {
-			const textInput = CardService.newTextInput().setFieldName(fieldName).setTitle(title);
-			return textInput;
+			return TextInput(input);
 		}
 		case EMAIL: {
-			const textInput = CardService.newTextInput()
-				.setFieldName(fieldName)
-				.setTitle(title)
-				.setValue(input.value || '');
-			return textInput;
+			return EmailInput(input);
 		}
-		case NAME: {
-			const textInput = CardService.newTextInput()
-				.setFieldName(fieldName)
-				.setTitle(title)
-				.setValue(input.value || '');
-			return textInput;
+		case PHONE: {
+			return PhoneInput(input);
+		}
+		case LINK: {
+			return LinkInput(input);
+		}
+		case DATE: {
+			return DateInput(input);
+		}
+		case FILES: {
+			return FileInput(input);
 		}
 		case PERSON: {
-			const dropdown = CardService.newSelectionInput()
-				.setType(CardService.SelectionInputType.DROPDOWN)
-				.setTitle(title)
-				.setFieldName(fieldName)
-				.addItem('Nir Ofir', 'option_1', true)
-				.addItem('Binod Chaudhary', 'option_2', false);
-
-			return dropdown;
+			return StatusInput(input);
+		}
+		case COLOR: {
+			return StatusInput(input);
 		}
 
 		default:
-			const textInput = CardService.newTextInput().setFieldName(fieldName).setTitle(title);
-			return textInput;
+			return '';
 	}
 };
 
