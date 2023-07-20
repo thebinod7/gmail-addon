@@ -20,26 +20,38 @@ export const extractCharactersBeforeSymbol = (inputString, symbol) => {
 	return match ? match[1].trim() : '';
 };
 
+export const saveCurrentBoardAndItem = data => {
+	const properties = PropertiesService.getUserProperties();
+	properties.setProperty('currentBoardAndItem', JSON.stringify(data));
+};
+
+export const getCurrentBoardAndItem = () => {
+	const properties = PropertiesService.getUserProperties();
+	const data = properties.getProperty('currentBoardAndItem');
+	if (!data) return null;
+	return JSON.parse(data);
+};
+
 export const saveToken = token => {
-	var properties = PropertiesService.getUserProperties();
+	const properties = PropertiesService.getUserProperties();
 	properties.setProperty('access_token', token);
 };
 
 export const getToken = () => {
-	var properties = PropertiesService.getUserProperties();
-	var token = properties.getProperty('access_token');
+	const properties = PropertiesService.getUserProperties();
+	const token = properties.getProperty('access_token');
 	return token;
 };
 
 export const extractEmailAddress = text => {
-	var regex = /[\w\.-]+@[\w\.-]+\.\w+/g;
-	var matches = text.match(regex);
+	const regex = /[\w\.-]+@[\w\.-]+\.\w+/g;
+	const matches = text.match(regex);
 	return matches ? matches[0] : null;
 };
 
 export const findEmailInBoardRow = (row, email) => {
-	var columns = row.column_values;
-	var emailColumns = columns.filter(function (f) {
+	const columns = row.column_values;
+	const emailColumns = columns.filter(function (f) {
 		return f.type === 'email';
 	});
 	if (emailColumns.length < 1) return null;

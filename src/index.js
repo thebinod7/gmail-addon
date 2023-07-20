@@ -14,7 +14,9 @@ import {
 	extractCharactersBeforeSymbol,
 	extractObjectKeysAndValues,
 	sanitizInputPayload,
-	createBoardQuery
+	createBoardQuery,
+	saveCurrentBoardAndItem,
+	getCurrentBoardAndItem
 } from './utils';
 import { SAMPLE_DATA } from './constants';
 
@@ -79,6 +81,7 @@ function onGmailMessageOpen(e) {
 	if (!settings || !settings.data) return MessageCard('No settings found!');
 	const { allowedFields, board } = settings.data;
 	const { email, itemName } = fetchGmailSenderAndEmail(e);
+	saveCurrentBoardAndItem({ itemName, boardId: board.value });
 	// Search in database
 	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
 	console.log('DBRES=>', dbResponse);
@@ -102,17 +105,18 @@ function handleLoginClick(e) {
 }
 
 function handleSaveContact(e) {
-	console.log('Input=>', e.formInput);
-	// Get inputType by matching ID (text1 => text)
 	// Create board payload (columnType,columnId, value)
+	const { keys, values } = extractObjectKeysAndValues(e.formInput);
+	const sanitizedData = sanitizInputPayload({ keys, values });
+	const currentItem = getCurrentBoardAndItem();
+	if (!currentItem) return;
+	const { itemName, boardId } = currentItem;
+	console.log('Sanitized=>', sanitizedData);
+	console.log('CurrentItem=>', currentItem);
+	// CreateBoardITEm => itemID
+	//  itemID, boardID
 	// Save to board
 	// Save to DB (Remove sample data before save)
-	const { keys, values } = extractObjectKeysAndValues(e.formInput);
-	console.log('KEYS==>', keys);
-	console.log('Values=>', values);
-	const sanitizedData = sanitizInputPayload({ keys, values });
-	console.log('Sanitized=>', sanitizedData);
-	// Get itemName, itemID, boardID
 	const message = CardService.newTextParagraph().setText('Form submitted successfully!');
 	const updatedCard = CardService.newCardBuilder()
 		.addSection(CardService.newCardSection().addWidget(message))
