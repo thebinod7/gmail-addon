@@ -1,8 +1,23 @@
 import { BOARD_COLUMNS } from '../constants';
 import { DateInput, EmailInput, FileInput, LinkInput, PhoneInput, StatusInput, TextInput } from '../formInputs';
 
-const { NAME, DATE, NUMBERS, EMAIL, COLOR, DROPDOWN, PHONE, LINK, TEXT, BOARD_RELATION, LOOKUP, FILES, PERSON } =
-	BOARD_COLUMNS;
+const {
+	NAME,
+	DATE,
+	NUMBERS,
+	EMAIL,
+	COLOR,
+	DROPDOWN,
+	PHONE,
+	LINK,
+	TEXT,
+	BOARD_RELATION,
+	LOOKUP,
+	FILES,
+	PERSON,
+	LONG_TEXT,
+	RATING
+} = BOARD_COLUMNS;
 
 export const appendEmailAndItemName = ({ fields, itemName, email }) => {
 	let result = [];
@@ -208,13 +223,13 @@ const getColumTypeByID = id => {
 	const hasDate = id.includes(DATE);
 	if (hasDate) return DATE;
 
-	const hasPerson = id.includes(PERSON);
+	const hasPerson = id.includes('person');
 	if (hasPerson) return PERSON;
 
 	const hasColor = id.includes(COLOR);
 	if (hasColor) return COLOR;
 
-	const hasNumber = id.includes(NUMBERS);
+	const hasNumber = id.includes('numeric');
 	if (hasNumber) return NUMBERS;
 
 	const hasFiles = id.includes(FILES);

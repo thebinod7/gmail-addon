@@ -4,7 +4,13 @@ const MONDAY_CLIENT_SECRET = process.env.CLIENT_SECRET;
 const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
 
 import { HomepageCard, AuthCard, SaveContactCard, UpdateContactCard, MessageCard, AuthorizationCard } from './cards';
-import { fetchMondayAccessToken, fetchMondayAccountDetails, fetchBoardColumnValues } from './services/monday';
+import {
+	fetchMondayAccessToken,
+	fetchMondayAccountDetails,
+	fetchBoardColumnValues,
+	createBoardItem,
+	updateExtraColumns
+} from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings } from './services/offsite';
 import {
 	getToken,
@@ -79,9 +85,9 @@ function onGmailMessageOpen(e) {
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	console.log('SETTINGS=>', settings);
 	if (!settings || !settings.data) return MessageCard('No settings found!');
-	const { allowedFields, board } = settings.data;
+	const { allowedFields, board, group } = settings.data;
 	const { email, itemName } = fetchGmailSenderAndEmail(e);
-	saveCurrentBoardAndItem({ itemName, boardId: board.value });
+	saveCurrentBoardAndItem({ group: group || 'topics', itemName, boardId: board.value });
 	// Search in database
 	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
 	console.log('DBRES=>', dbResponse);
@@ -97,25 +103,28 @@ function onGmailMessageOpen(e) {
 		}
 	}
 
-	return SaveContactCard({ allowedFields: SAMPLE_DATA, email, itemName });
+	return SaveContactCard({ allowedFields, email, itemName });
 }
 
 function handleLoginClick(e) {
 	return AuthorizationCard();
 }
 
+// TODO: remove filter by multiple-person
+// Save to DB (Remove sample data before save)
 function handleSaveContact(e) {
 	// Create board payload (columnType,columnId, value)
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
-	const sanitizedData = sanitizInputPayload({ keys, values });
+	const sanitizedData = sanitizInputPayload({ keys, values }); // columnId,columnTyp,value
 	const currentItem = getCurrentBoardAndItem();
 	if (!currentItem) return;
-	const { itemName, boardId } = currentItem;
-	console.log('Sanitized=>', sanitizedData);
-	console.log('CurrentItem=>', currentItem);
-	// CreateBoardITEm => itemID
-	//  itemID, boardID
-	// Save to board
+	const { itemName, boardId, group } = currentItem;
+	const res = createBoardItem({ boardId, group, itemName });
+	if (res.error_message) return;
+	const { id: itemId } = res.data.create_item;
+	const filtered = sanitizedData.filter(f => f.columnType !== 'multiple-person');
+	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: filtered });
+	updateExtraColumns(boardQuery);
 	// Save to DB (Remove sample data before save)
 	const message = CardService.newTextParagraph().setText('Form submitted successfully!');
 	const updatedCard = CardService.newCardBuilder()
