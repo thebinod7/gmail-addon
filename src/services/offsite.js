@@ -18,17 +18,21 @@ export const getBoardItemByEmail = email => {
 };
 
 export const fetchGmailSettings = accountId => {
-	var headers = {
-		apisecret: OFFSITE_API_SECRET,
-		'Content-Type': 'application/json'
-	};
-	var options = {
-		method: 'get',
-		contentType: 'application/json',
-		muteHttpExceptions: true,
-		headers: headers
-	};
-	var backendUrl = OFFSITE_API_ENDPOINT + '/api/v1/crm-settings/' + accountId + '/account/Gmail Contact';
-	var res = UrlFetchApp.fetch(backendUrl, options);
-	return JSON.parse(res);
+	try {
+		const headers = {
+			apisecret: OFFSITE_API_SECRET,
+			'Content-Type': 'application/json'
+		};
+		const options = {
+			method: 'get',
+			contentType: 'application/json',
+			muteHttpExceptions: true,
+			headers: headers
+		};
+		const backendUrl = OFFSITE_API_ENDPOINT + '/api/v1/crm-settings/' + accountId + '/account/Gmail Contact';
+		const res = UrlFetchApp.fetch(backendUrl, options);
+		return JSON.parse(res);
+	} catch (err) {
+		console.log('ERROR==>', err);
+	}
 };

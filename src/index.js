@@ -6,14 +6,7 @@ const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
 import { HomepageCard, AuthCard, SaveContactCard, UpdateContactCard, MessageCard, AuthorizationCard } from './cards';
 import { fetchMondayAccessToken, fetchMondayAccountDetails, fetchBoardColumnValues } from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings } from './services/offsite';
-import {
-	getToken,
-	saveToken,
-	extractEmailAddress,
-	findEmailInBoardRow,
-	createFormInputByType,
-	extractCharactersBeforeSymbol
-} from './utils';
+import { getToken, saveToken, extractEmailAddress, findEmailInBoardRow, extractCharactersBeforeSymbol } from './utils';
 import { SAMPLE_DATA } from './constants';
 
 const onDefaultHomePageOpen = () => HomepageCard();
@@ -73,6 +66,7 @@ function onGmailMessageOpen(e) {
 	const account = fetchMondayAccountDetails();
 	const accountId = account.account_id.toString();
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
+	console.log('SETTINGS=>', settings);
 	if (!settings || !settings.data) return MessageCard('No settings found!');
 	const { allowedFields, board } = settings.data;
 	const { email, itemName } = fetchGmailSenderAndEmail(e);
@@ -91,33 +85,7 @@ function onGmailMessageOpen(e) {
 		}
 	}
 
-	return SaveContactCard({ allowedFields, email, itemName });
-
-	var card = CardService.newCardBuilder();
-	var section = CardService.newCardSection();
-
-	var formAction = CardService.newAction().setFunctionName('handleFormSubmit');
-
-	var submitButton = CardService.newTextButton().setText('Submit').setOnClickAction(formAction);
-
-	var btnLogout = CardService.newTextButton()
-		.setText('Logout')
-		.setOnClickAction(CardService.newAction().setFunctionName('handleLogoutClick'));
-
-	var btnAuth = CardService.newTextButton()
-		.setText('Connect to Monday')
-		.setOnClickAction(CardService.newAction().setFunctionName('handleLoginClick'));
-
-	var widgets;
-
-	for (var i = 0; i < SAMPLE_DATA.length; i++) {
-		var _input = createFormInputByType(SAMPLE_DATA[i]);
-		widgets = section.addWidget(_input);
-	}
-	if (accessToken) widgets.addWidget(submitButton).addWidget(btnLogout);
-	else widgets.addWidget(submitButton).addWidget(btnAuth);
-	card.addSection(widgets);
-	return card.build();
+	return SaveContactCard({ allowedFields: SAMPLE_DATA, email, itemName });
 }
 
 function handleLoginClick(e) {

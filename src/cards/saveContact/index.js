@@ -11,7 +11,7 @@ export default function saveContactCard({ email, itemName, allowedFields }) {
 
 	const ordered_fields = fieldOrderRealign(allowedFields);
 	const appended = appendEmailAndItemName({ fields: ordered_fields, email, itemName });
-	console.log('appended==>', appended);
+	console.log('appended result==>', appended);
 	for (let f of appended) {
 		var _input = createFormInputByType(f);
 		if (_input) widgets = section.addWidget(_input);

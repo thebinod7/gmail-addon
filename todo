@@ -1,0 +1,12 @@
+Connect with local server using ngrok (NOT RESOLVED!!!)
+Display all input fields
+*Populate values for all fields (Not required as it's going to be saved on board)
+Save form data to board and database
+
+Display update UI with all fields (From DB)
+Display update UI with all fields (From Monday board)
+Populate all fields
+Save form values to board and database
+
+Display item updates list
+Save inbox content as an item update
