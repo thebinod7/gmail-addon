@@ -1,7 +1,10 @@
 import { fieldOrderRealign, createFormInputByType, appendEmailAndItemName } from '../../utils';
 
-export default function saveContactCard({ email, itemName, allowedFields, boardUsers }) {
+export default function saveContactCard({ email, itemName, allowedFields, boardUsers, strColumns }) {
 	let widgets;
+
+	const selectCols = strColumns.filter(f => f.type === 'color');
+	console.log('SELECT_COLS=>', selectCols);
 
 	const cardDivider = CardService.newDivider();
 	const section = CardService.newCardSection().setHeader('Save Contact').addWidget(cardDivider);
@@ -11,7 +14,9 @@ export default function saveContactCard({ email, itemName, allowedFields, boardU
 	console.log('APPENEDDE!!!', appended);
 
 	for (let f of appended) {
-		var _input = createFormInputByType(f, boardUsers);
+		const currentSelectInput = selectCols.find(s => s.type === f.type);
+		console.log('CURRENT=>', currentSelectInput);
+		var _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
 		if (_input) widgets = section.addWidget(_input);
 	}
 

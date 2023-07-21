@@ -5,7 +5,7 @@ export default function Person(input, boardUsers) {
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle(title)
 		.setFieldName(id)
-		.addItem('--Select--', null, true);
+		.addItem('--Select User--', null, true);
 
 	if (boardUsers.length) {
 		for (let b of boardUsers) {

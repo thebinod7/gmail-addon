@@ -1,14 +1,5 @@
 import { BOARD_COLUMNS } from '../constants';
-import {
-	DateInput,
-	EmailInput,
-	FileInput,
-	PersonInput,
-	LinkInput,
-	PhoneInput,
-	SelectInput,
-	TextInput
-} from '../formInputs';
+import { DateInput, EmailInput, PersonInput, LinkInput, PhoneInput, SelectInput, TextInput } from '../formInputs';
 
 const {
 	NAME,
@@ -139,7 +130,7 @@ export const getDefaultValueByColumnType = columnsWithValue => {
 	return result;
 };
 
-export const createFormInputByType = (input, boardUsers) => {
+export const createFormInputByType = ({ input, boardUsers, currentSelectInput }) => {
 	switch (input.type) {
 		case NAME: {
 			return TextInput(input);
@@ -159,14 +150,11 @@ export const createFormInputByType = (input, boardUsers) => {
 		case DATE: {
 			return DateInput(input);
 		}
-		case FILES: {
-			return FileInput(input);
-		}
 		case PERSON: {
 			return PersonInput(input, boardUsers);
 		}
 		case COLOR: {
-			return SelectInput(input);
+			return SelectInput(input, currentSelectInput);
 		}
 
 		default:
