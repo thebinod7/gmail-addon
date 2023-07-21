@@ -28,6 +28,7 @@ import {
 	sanitizePayloadValue
 } from './utils';
 import { SAMPLE_DATA } from './constants';
+import updateContactCard from './cards/updateContact';
 
 const onDefaultHomePageOpen = () => HomepageCard();
 
@@ -103,10 +104,7 @@ function onGmailMessageOpen(e) {
 	console.log('ROWS:', rows);
 	for (let i = 0; i < rows.length; i++) {
 		let found = findEmailInBoardRow(rows[i], email);
-		if (found) {
-			return UpdateContactCard();
-			// append values/sanitize forms and render;
-		}
+		if (found) return updateContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
 	}
 
 	return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
@@ -116,7 +114,7 @@ function handleLoginClick(e) {
 	return AuthorizationCard();
 }
 
-// TODO: remove filter by multiple-person
+// TODO:
 // Save to DB (Remove sample data before save)
 function handleSaveContact(e) {
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
@@ -127,7 +125,6 @@ function handleSaveContact(e) {
 	const res = createBoardItem({ boardId, group, itemName });
 	if (res.error_message) return;
 	const { id: itemId } = res.data.create_item;
-	//Further sanitize Date, Color,Dropdwon,Person values
 	const valueSanitized = sanitizePayloadValue(sanitizedData);
 	console.log('valueSanitized=>', valueSanitized);
 	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });

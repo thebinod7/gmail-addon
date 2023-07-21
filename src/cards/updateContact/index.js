@@ -1,11 +1,30 @@
-export default function updateContactCard() {
-	const card = CardService.newCardBuilder();
-	const section = CardService.newCardSection();
+import { fieldOrderRealign, createFormInputByType, appendEmailAndItemName } from '../../utils';
+
+export default function updateContactCard({ email, itemName, allowedFields, boardUsers, strColumns }) {
+	let widgets;
+
+	const selectCols = strColumns.filter(f => f.type === 'color');
+
+	const cardDivider = CardService.newDivider();
+	const section = CardService.newCardSection().setHeader('Update Contact').addWidget(cardDivider);
+
+	const ordered_fields = fieldOrderRealign(allowedFields);
+	const appended = appendEmailAndItemName({ fields: ordered_fields, email, itemName });
+
+	for (let f of appended) {
+		const currentSelectInput = selectCols.find(s => s.type === f.type);
+		var _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
+		if (_input) widgets = section.addWidget(_input);
+	}
 
 	const btnLogout = CardService.newTextButton()
 		.setText('Logout')
 		.setOnClickAction(CardService.newAction().setFunctionName('handleLogoutClick'));
 
-	card.addSection(section.addWidget(btnLogout));
-	return card.build();
+	const formAction = CardService.newAction().setFunctionName('handleSaveContact');
+	const btnSubmit = CardService.newTextButton().setText('Submit').setOnClickAction(formAction);
+
+	const card = CardService.newCardBuilder().addSection(section.addWidget(btnSubmit).addWidget(btnLogout)).build();
+
+	return card;
 }

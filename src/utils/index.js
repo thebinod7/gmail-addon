@@ -258,15 +258,22 @@ const createPersonPayload = users => {
 
 const createDropdownPayload = () => {};
 
+//Further sanitize Date, Color,Dropdwon values
 export const sanitizePayloadValue = payload => {
 	let result = [];
 	if (!payload.length) return result;
 	for (let p of payload) {
 		if (p.columnType === PERSON && p.value) {
-			p.value = [{ value: p.value, label: 'User' }];
+			p.value = [{ value: p.value }];
 		}
 		if (p.columnType === COLOR && p.value) {
-			p.value = [{ id: p.value }];
+			p.value = p.value;
+		}
+		if (p.columnType === DATE && p.value) {
+			const { msSinceEpoch } = p.value;
+			const _date = new Date(msSinceEpoch);
+			const formattedDate = _date.toISOString();
+			p.value = formattedDate;
 		}
 		result.push(p);
 	}
@@ -294,7 +301,6 @@ export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload 
 			columnValues += `,\\"${t.columnId}\\":{\\"labels\\": [${data}]}`;
 		}
 		if (t.columnType === PERSON && t.value && t.value.length) {
-			console.log('US===>', t.value);
 			let usersList = createPersonPayload(t.value);
 			columnValues += `,\\"${t.columnId}\\": {\\"personsAndTeams\\" : [${usersList}]}`;
 		}
