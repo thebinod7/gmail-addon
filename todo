@@ -1,6 +1,6 @@
 Connect with local server using ngrok (NOT RESOLVED!!!)
-Display all input fields => 
-*Populate values for all fields (Not required as it's going to be saved on board)
+Display all input fields => DONE
+Populate values for SELECT_FIELDS => append to payload => Render form =>
 Save form data to board and database
 
 Display update UI with all fields (From DB)

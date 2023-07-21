@@ -1,5 +1,14 @@
 import { BOARD_COLUMNS } from '../constants';
-import { DateInput, EmailInput, FileInput, LinkInput, PhoneInput, SelectInput, TextInput } from '../formInputs';
+import {
+	DateInput,
+	EmailInput,
+	FileInput,
+	PersonInput,
+	LinkInput,
+	PhoneInput,
+	SelectInput,
+	TextInput
+} from '../formInputs';
 
 const {
 	NAME,
@@ -18,6 +27,15 @@ const {
 	LONG_TEXT,
 	RATING
 } = BOARD_COLUMNS;
+
+export const selectMatchingColumns = (allColumns, allowedColumns) => {
+	const result = [];
+	for (let c of allColumns) {
+		const found = allowedColumns.find(f => f.id === c.id);
+		if (found) result.push(c);
+	}
+	return result;
+};
 
 export const appendEmailAndItemName = ({ fields, itemName, email }) => {
 	let result = [];
@@ -121,7 +139,7 @@ export const getDefaultValueByColumnType = columnsWithValue => {
 	return result;
 };
 
-export const createFormInputByType = input => {
+export const createFormInputByType = (input, boardUsers) => {
 	switch (input.type) {
 		case NAME: {
 			return TextInput(input);
@@ -145,7 +163,7 @@ export const createFormInputByType = input => {
 			return FileInput(input);
 		}
 		case PERSON: {
-			return SelectInput(input);
+			return PersonInput(input, boardUsers);
 		}
 		case COLOR: {
 			return SelectInput(input);

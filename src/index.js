@@ -9,7 +9,9 @@ import {
 	fetchMondayAccountDetails,
 	fetchBoardColumnValues,
 	createBoardItem,
-	updateExtraColumns
+	updateExtraColumns,
+	fetchBoardSettingsStr,
+	fetchUsersByBoard
 } from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings } from './services/offsite';
 import {
@@ -82,9 +84,13 @@ function onGmailMessageOpen(e) {
 	const account = fetchMondayAccountDetails();
 	const accountId = account.account_id.toString();
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
-	console.log('SETTINGS=>', settings);
 	if (!settings || !settings.data) return MessageCard('No settings found!');
 	const { allowedFields, board, group } = settings.data;
+	const { data: settingsStrRes } = fetchBoardSettingsStr(board.value);
+	const strColumns = settingsStrRes.boards[0].columns;
+	const { data: boardUserData } = fetchUsersByBoard(board.value);
+	const boardUsers = boardUserData.boards[0].subscribers;
+
 	const { email, itemName } = fetchGmailSenderAndEmail(e);
 	saveCurrentBoardAndItem({ group: group || 'topics', itemName, boardId: board.value });
 	// Search in database
@@ -102,7 +108,7 @@ function onGmailMessageOpen(e) {
 		}
 	}
 
-	return SaveContactCard({ allowedFields: SAMPLE_DATA, email, itemName });
+	return SaveContactCard({ allowedFields: SAMPLE_DATA, strColumns, email, itemName, boardUsers });
 }
 
 function handleLoginClick(e) {

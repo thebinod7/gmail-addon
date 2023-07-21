@@ -41,6 +41,29 @@ export const createBoardItem = ({ boardId, group = 'topics', itemName }) => {
 	return JSON.parse(res);
 };
 
+export const fetchUsersByBoard = boardId => {
+	const accessToken = getToken();
+	let query = `query {
+		boards (ids: ${boardId}) {
+		  name
+		  subscribers {id name created_at email photo_small id account { name id slug}}
+		}
+	  }`;
+	const headers = {
+		Authorization: accessToken,
+		'Content-Type': 'application/json'
+	};
+	const options = {
+		method: 'post',
+		contentType: 'application/json',
+		muteHttpExceptions: true,
+		headers: headers,
+		payload: JSON.stringify({ query: query })
+	};
+	const res = UrlFetchApp.fetch(MONDAY_API_ENDPOINT, options);
+	return JSON.parse(res);
+};
+
 export const fetchBoardSettingsStr = boardIds => {
 	const accessToken = getToken();
 	let query = `query { boards(ids:${boardIds}, limit:${BOARD_ITEMS_LIMIT}) {id columns{id,type, settings_str} }}`;

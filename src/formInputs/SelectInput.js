@@ -1,4 +1,4 @@
-export default function SelectInput(input, options) {
+export default function SelectInput(input) {
 	const { id, title } = input;
 
 	const dropdown = CardService.newSelectionInput()

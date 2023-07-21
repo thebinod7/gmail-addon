@@ -8,3 +8,4 @@ export { default as LinkInput } from './LinkInput';
 export { default as DateInput } from './DateInput';
 export { default as SelectInput } from './SelectInput';
 export { default as FileInput } from './FileInput';
+export { default as PersonInput } from './PersonInput';
