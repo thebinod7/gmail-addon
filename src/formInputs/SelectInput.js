@@ -1,5 +1,6 @@
-export default function StatusInput(input) {
+export default function SelectInput(input, options) {
 	const { id, title } = input;
+
 	const dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle(title)

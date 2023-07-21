@@ -1,5 +1,5 @@
 import { BOARD_COLUMNS } from '../constants';
-import { DateInput, EmailInput, FileInput, LinkInput, PhoneInput, StatusInput, TextInput } from '../formInputs';
+import { DateInput, EmailInput, FileInput, LinkInput, PhoneInput, SelectInput, TextInput } from '../formInputs';
 
 const {
 	NAME,
@@ -145,10 +145,10 @@ export const createFormInputByType = input => {
 			return FileInput(input);
 		}
 		case PERSON: {
-			return StatusInput(input);
+			return SelectInput(input);
 		}
 		case COLOR: {
-			return StatusInput(input);
+			return SelectInput(input);
 		}
 
 		default:

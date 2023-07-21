@@ -6,5 +6,5 @@ export { default as PhoneInput } from './PhoneInput';
 export { default as NumberInput } from './NumberInput';
 export { default as LinkInput } from './LinkInput';
 export { default as DateInput } from './DateInput';
-export { default as StatusInput } from './StatusInput';
+export { default as SelectInput } from './SelectInput';
 export { default as FileInput } from './FileInput';

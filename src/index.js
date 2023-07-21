@@ -71,7 +71,6 @@ function fetchGmailSenderAndEmail(e) {
 		let emailAddr = extractEmailAddress(sender);
 		email = emailAddr;
 		let body = messages[i].getBody();
-		console.log('Text==>', body);
 	}
 	return { email, itemName };
 }
@@ -103,7 +102,7 @@ function onGmailMessageOpen(e) {
 		}
 	}
 
-	return SaveContactCard({ allowedFields, email, itemName });
+	return SaveContactCard({ allowedFields: SAMPLE_DATA, email, itemName });
 }
 
 function handleLoginClick(e) {
