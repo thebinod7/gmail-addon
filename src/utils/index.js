@@ -232,7 +232,7 @@ const getColumTypeByID = id => {
 	const hasPerson = id.includes('person');
 	if (hasPerson) return PERSON;
 
-	const hasColor = id.includes(COLOR);
+	const hasColor = id.includes('status');
 	if (hasColor) return COLOR;
 
 	const hasNumber = id.includes('numeric');
@@ -242,6 +242,35 @@ const getColumTypeByID = id => {
 	if (hasFiles) return FILES;
 
 	return TEXT;
+};
+
+const createPersonPayload = users => {
+	let usersList = [];
+	if (!users.length) return usersList;
+	if (users.length) {
+		for (let u of users) {
+			let d = `{\\"id\\":${u.value},\\"kind\\":\\"person\\"}`;
+			usersList.push(d);
+		}
+	}
+	return usersList;
+};
+
+const createDropdownPayload = () => {};
+
+export const sanitizePayloadValue = payload => {
+	let result = [];
+	if (!payload.length) return result;
+	for (let p of payload) {
+		if (p.columnType === PERSON && p.value) {
+			p.value = [{ value: p.value, label: 'User' }];
+		}
+		if (p.columnType === COLOR && p.value) {
+			p.value = [{ id: p.value }];
+		}
+		result.push(p);
+	}
+	return result;
 };
 
 export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload }) => {
@@ -265,6 +294,7 @@ export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload 
 			columnValues += `,\\"${t.columnId}\\":{\\"labels\\": [${data}]}`;
 		}
 		if (t.columnType === PERSON && t.value && t.value.length) {
+			console.log('US===>', t.value);
 			let usersList = createPersonPayload(t.value);
 			columnValues += `,\\"${t.columnId}\\": {\\"personsAndTeams\\" : [${usersList}]}`;
 		}

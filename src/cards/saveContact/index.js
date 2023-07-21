@@ -4,18 +4,15 @@ export default function saveContactCard({ email, itemName, allowedFields, boardU
 	let widgets;
 
 	const selectCols = strColumns.filter(f => f.type === 'color');
-	console.log('SELECT_COLS=>', selectCols);
 
 	const cardDivider = CardService.newDivider();
 	const section = CardService.newCardSection().setHeader('Save Contact').addWidget(cardDivider);
 
 	const ordered_fields = fieldOrderRealign(allowedFields);
 	const appended = appendEmailAndItemName({ fields: ordered_fields, email, itemName });
-	console.log('APPENEDDE!!!', appended);
 
 	for (let f of appended) {
 		const currentSelectInput = selectCols.find(s => s.type === f.type);
-		console.log('CURRENT=>', currentSelectInput);
 		var _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
 		if (_input) widgets = section.addWidget(_input);
 	}

@@ -24,7 +24,8 @@ import {
 	sanitizInputPayload,
 	createBoardQuery,
 	saveCurrentBoardAndItem,
-	getCurrentBoardAndItem
+	getCurrentBoardAndItem,
+	sanitizePayloadValue
 } from './utils';
 import { SAMPLE_DATA } from './constants';
 
@@ -108,7 +109,7 @@ function onGmailMessageOpen(e) {
 		}
 	}
 
-	return SaveContactCard({ allowedFields: SAMPLE_DATA, strColumns, email, itemName, boardUsers });
+	return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
 }
 
 function handleLoginClick(e) {
@@ -118,7 +119,6 @@ function handleLoginClick(e) {
 // TODO: remove filter by multiple-person
 // Save to DB (Remove sample data before save)
 function handleSaveContact(e) {
-	// Create board payload (columnType,columnId, value)
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
 	const sanitizedData = sanitizInputPayload({ keys, values }); // columnId,columnTyp,value
 	const currentItem = getCurrentBoardAndItem();
@@ -127,10 +127,12 @@ function handleSaveContact(e) {
 	const res = createBoardItem({ boardId, group, itemName });
 	if (res.error_message) return;
 	const { id: itemId } = res.data.create_item;
-	const filtered = sanitizedData.filter(f => f.columnType !== 'multiple-person');
-	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: filtered });
-	updateExtraColumns(boardQuery);
-	// Save to DB (Remove sample data before save)
+	//Further sanitize Date, Color,Dropdwon,Person values
+	const valueSanitized = sanitizePayloadValue(sanitizedData);
+	console.log('valueSanitized=>', valueSanitized);
+	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });
+	const updatedExtras = updateExtraColumns(boardQuery);
+	console.log('Updated Extras=>', updatedExtras);
 	const message = CardService.newTextParagraph().setText('Form submitted successfully!');
 	const updatedCard = CardService.newCardBuilder()
 		.addSection(CardService.newCardSection().addWidget(message))

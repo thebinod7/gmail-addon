@@ -9,7 +9,7 @@ export default function Person(input, boardUsers) {
 
 	if (boardUsers.length) {
 		for (let b of boardUsers) {
-			dropdown.addItem(b.name, b.id, false);
+			dropdown.addItem(b.name, b.id.toString(), false);
 		}
 	}
 
