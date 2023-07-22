@@ -258,6 +258,17 @@ const createPersonPayload = users => {
 
 const createDropdownPayload = () => {};
 
+function convertMSToNormalDate(msSinceEpoch) {
+	const date = new Date(msSinceEpoch);
+	const isoDateString = date.toISOString();
+	const dateComponents = isoDateString.split('T')[0].split('-');
+	const year = dateComponents[0];
+	const month = dateComponents[1];
+	const day = dateComponents[2];
+
+	return `${year}-${month}-${day}`;
+}
+
 //Further sanitize Date, Color,Dropdwon values
 export const sanitizePayloadValue = payload => {
 	let result = [];
@@ -271,9 +282,7 @@ export const sanitizePayloadValue = payload => {
 		}
 		if (p.columnType === DATE && p.value) {
 			const { msSinceEpoch } = p.value;
-			const _date = new Date(msSinceEpoch);
-			const formattedDate = _date.toISOString();
-			p.value = formattedDate;
+			p.value = convertMSToNormalDate(msSinceEpoch);
 		}
 		result.push(p);
 	}
