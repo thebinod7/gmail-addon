@@ -2,6 +2,7 @@ Connect with local server using ngrok (NOT RESOLVED!!!)
 Display all input fields => DONE
 Populate values for SELECT_FIELDS => append to payload => Render form =>
 Save form data to board and database
+Save same payload to DB
 
 Display update UI with all fields (From DB)
 Display update UI with all fields (From Monday board)

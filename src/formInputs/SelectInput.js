@@ -21,13 +21,14 @@ export default function SelectInput(input, currentSelectInput) {
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle(title)
-		.setFieldName(id)
-		.addItem('--Select Option--', null, true);
+		.setFieldName(id);
 
 	if (options.length) {
 		for (let b of options) {
 			dropdown.addItem(b.label, b.id, false);
 		}
+	} else {
+		dropdown.addItem('--Select--', '', true);
 	}
 
 	return dropdown;

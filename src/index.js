@@ -88,26 +88,28 @@ function onGmailMessageOpen(e) {
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	if (!settings || !settings.data) return MessageCard('No settings found!');
 	const { allowedFields, board, group } = settings.data;
-	const { data: settingsStrRes } = fetchBoardSettingsStr(board.value);
+	const boardId = board.value;
+	const { data: settingsStrRes } = fetchBoardSettingsStr(boardId);
+	const { data: boardUserData } = fetchUsersByBoard(boardId);
 	const strColumns = settingsStrRes.boards[0].columns;
-	const { data: boardUserData } = fetchUsersByBoard(board.value);
 	const boardUsers = boardUserData.boards[0].subscribers;
 
 	const { email, itemName } = fetchGmailSenderAndEmail(e);
-	saveCurrentBoardAndItem({ group: group || 'topics', itemName, boardId: board.value });
+	saveCurrentBoardAndItem({ group: group || 'topics', itemName, boardId });
 	// Search in database
 	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
 	console.log('DBRES=>', dbResponse);
-	const boardIds = [board.value];
-	const boardResponse = fetchBoardColumnValues(boardIds); // Search email inside Monday board
-	const rows = boardResponse.data.boards[0].items;
-	console.log('ROWS:', rows);
+	const boardIds = [boardId];
+	const boardResponse = fetchBoardColumnValues(boardIds); // To search email inside Monday board
+	const rows = boardResponse.data.boards[0].items; // Select rows from matching board response
+	const sample_columns = [...rows[0].column_values, { id: 'name', type: 'name', title: 'Item Name' }]; // Remove it
+	console.log('SAMPLE_COLS=>', sample_columns);
 	for (let i = 0; i < rows.length; i++) {
 		let found = findEmailInBoardRow(rows[i], email);
 		if (found) return updateContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
 	}
 
-	return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
+	return SaveContactCard({ allowedFields: sample_columns, strColumns, email, itemName, boardUsers });
 }
 
 function handleLoginClick(e) {
