@@ -38,10 +38,35 @@ export const appendEmailAndItemName = ({ fields, itemName, email }) => {
 	return result;
 };
 
+export const addSetingsStrToPayload = (settingsStr, payload) => {
+	let result = [];
+	for (let p of payload) {
+		const found = settingsStr.find(s => s.id === p.columnId);
+		if (found && found.settings_str) {
+			let updatedData = { ...p, settings_str: found.settings_str };
+			result.push(updatedData);
+		}
+		if (found && !found.settings_str) result.push(p);
+	}
+	return result;
+};
+
 export const extractCharactersBeforeSymbol = (inputString, symbol) => {
 	const regex = new RegExp(`(.*?)\\s*${symbol}`);
 	const match = inputString.match(regex);
 	return match ? match[1].trim() : '';
+};
+
+export const saveColumStrSettings = data => {
+	const properties = PropertiesService.getUserProperties();
+	properties.setProperty('columnStr', JSON.stringify(data));
+};
+
+export const getColumStrSettings = () => {
+	const properties = PropertiesService.getUserProperties();
+	const data = properties.getProperty('columnStr');
+	if (!data) return null;
+	return JSON.parse(data);
 };
 
 export const saveCurrentBoardAndItem = data => {

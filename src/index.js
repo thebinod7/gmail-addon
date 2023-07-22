@@ -13,7 +13,7 @@ import {
 	fetchBoardSettingsStr,
 	fetchUsersByBoard
 } from './services/monday';
-import { getBoardItemByEmail, fetchGmailSettings } from './services/offsite';
+import { getBoardItemByEmail, fetchGmailSettings, upsertBoardItemByEmail } from './services/offsite';
 import {
 	getToken,
 	saveToken,
@@ -25,7 +25,10 @@ import {
 	createBoardQuery,
 	saveCurrentBoardAndItem,
 	getCurrentBoardAndItem,
-	sanitizePayloadValue
+	sanitizePayloadValue,
+	saveColumStrSettings,
+	getColumStrSettings,
+	addSetingsStrToPayload
 } from './utils';
 import { SAMPLE_DATA } from './constants';
 import updateContactCard from './cards/updateContact';
@@ -92,6 +95,7 @@ function onGmailMessageOpen(e) {
 	const { data: settingsStrRes } = fetchBoardSettingsStr(boardId);
 	const { data: boardUserData } = fetchUsersByBoard(boardId);
 	const strColumns = settingsStrRes.boards[0].columns;
+	saveColumStrSettings(strColumns);
 	const boardUsers = boardUserData.boards[0].subscribers;
 
 	const { email, itemName } = fetchGmailSenderAndEmail(e);
@@ -101,7 +105,7 @@ function onGmailMessageOpen(e) {
 	console.log('DBRES=>', dbResponse);
 	const boardIds = [boardId];
 	const boardResponse = fetchBoardColumnValues(boardIds); // To search email inside Monday board
-	const rows = boardResponse.data.boards[0].items; // Select rows from matching board response
+	const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
 	const sample_columns = [...rows[0].column_values, { id: 'name', type: 'name', title: 'Item Name' }]; // Remove it
 	console.log('SAMPLE_COLS=>', sample_columns);
 	for (let i = 0; i < rows.length; i++) {
@@ -132,6 +136,14 @@ function handleSaveContact(e) {
 	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });
 	const updatedExtras = updateExtraColumns(boardQuery);
 	console.log('Updated Extras=>', updatedExtras);
+	// Append settingsStr and save to Database
+	const strColumns = getColumStrSettings();
+	const settingsStrAdded = addSetingsStrToPayload(strColumns, valueSanitized);
+	const item = { id: itemId, name: itemName, column_values: settingsStrAdded };
+	const emailField = valueSanitized.find(v => v.columnType === 'email');
+	console.log('EmailFIeld=>', emailField);
+	const itemUpserted = upsertBoardItemByEmail({ email: emailField.value, item });
+	console.log('Item Upserted!', itemUpserted);
 	const message = CardService.newTextParagraph().setText('Form submitted successfully!');
 	const updatedCard = CardService.newCardBuilder()
 		.addSection(CardService.newCardSection().addWidget(message))
