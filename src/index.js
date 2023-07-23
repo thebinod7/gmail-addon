@@ -15,21 +15,23 @@ import {
 } from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings, upsertBoardItemByEmail } from './services/offsite';
 import {
-	getToken,
-	saveToken,
 	extractEmailAddress,
 	findEmailInBoardRow,
 	extractCharactersBeforeSymbol,
 	extractObjectKeysAndValues,
 	sanitizInputPayload,
 	createBoardQuery,
-	saveCurrentBoardAndItem,
-	getCurrentBoardAndItem,
 	sanitizePayloadValue,
-	saveColumStrSettings,
-	getColumStrSettings,
 	addSetingsStrToPayload
 } from './utils';
+import {
+	saveCurrentBoardAndItem,
+	getCurrentBoardAndItem,
+	saveColumStrSettings,
+	getColumStrSettings,
+	getToken,
+	saveToken
+} from './utils/localStorage';
 import { SAMPLE_DATA } from './constants';
 import updateContactCard from './cards/updateContact';
 
@@ -139,16 +141,17 @@ function handleSaveContact(e) {
 	// Append settingsStr and save to Database
 	const strColumns = getColumStrSettings();
 	const settingsStrAdded = addSetingsStrToPayload(strColumns, valueSanitized);
+	console.log('SETTINGS_ADDED', settingsStrAdded);
 	const item = { id: itemId, name: itemName, column_values: settingsStrAdded };
 	const emailField = valueSanitized.find(v => v.columnType === 'email');
-	console.log('EmailFIeld=>', emailField);
 	const itemUpserted = upsertBoardItemByEmail({ email: emailField.value, item });
-	console.log('Item Upserted!', itemUpserted);
-	const message = CardService.newTextParagraph().setText('Form submitted successfully!');
-	const updatedCard = CardService.newCardBuilder()
-		.addSection(CardService.newCardSection().addWidget(message))
-		.build();
-	return updatedCard;
+	console.log('BoardItem Upserted!', itemUpserted);
+	return MessageCard('Contact saved successfully!');
+	// const message = CardService.newTextParagraph().setText('Form submitted successfully!');
+	// const updatedCard = CardService.newCardBuilder()
+	// 	.addSection(CardService.newCardSection().addWidget(message))
+	// 	.build();
+	// return updatedCard;
 }
 
 global.onGmailMessageOpen = onGmailMessageOpen;

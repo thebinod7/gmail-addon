@@ -1,4 +1,4 @@
-import { getToken } from '../utils';
+import { getToken } from '../utils/localStorage';
 
 const MONDAY_CLIENT_ID = process.env.APP_CLIENT_ID;
 const MONDAY_CLIENT_SECRET = process.env.CLIENT_SECRET;
