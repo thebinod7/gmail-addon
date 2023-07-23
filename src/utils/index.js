@@ -19,6 +19,19 @@ const {
 	RATING
 } = BOARD_COLUMNS;
 
+export const addValuesAndSettingsStr = (allowedFields, settingsStrAddedInputs) => {
+	let result = [];
+	for (let f of allowedFields) {
+		const found = settingsStrAddedInputs.find(v => v.columnId === f.id);
+		if (found) {
+			const { value, settings_str, columnId, columType } = found;
+			let newData = { ...f, value, settings_str, columType, columnId };
+			result.push(newData);
+		}
+	}
+	return result;
+};
+
 export const selectMatchingColumns = (allColumns, allowedColumns) => {
 	const result = [];
 	for (let c of allColumns) {

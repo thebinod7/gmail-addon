@@ -22,7 +22,8 @@ import {
 	sanitizInputPayload,
 	createBoardQuery,
 	sanitizePayloadValue,
-	addSetingsStrToPayload
+	addSetingsStrToPayload,
+	addValuesAndSettingsStr
 } from './utils';
 import {
 	saveCurrentBoardAndItem,
@@ -30,7 +31,9 @@ import {
 	saveColumStrSettings,
 	getColumStrSettings,
 	getToken,
-	saveToken
+	saveToken,
+	saveAllowedFIelds,
+	getAllowedFields
 } from './utils/localStorage';
 import { SAMPLE_DATA } from './constants';
 import updateContactCard from './cards/updateContact';
@@ -94,6 +97,7 @@ function onGmailMessageOpen(e) {
 	if (!settings || !settings.data) return MessageCard('No settings found!');
 	const { allowedFields, board, group } = settings.data;
 	const boardId = board.value;
+	saveAllowedFIelds(allowedFields);
 	const { data: settingsStrRes } = fetchBoardSettingsStr(boardId);
 	const { data: boardUserData } = fetchUsersByBoard(boardId);
 	const strColumns = settingsStrRes.boards[0].columns;
@@ -104,18 +108,19 @@ function onGmailMessageOpen(e) {
 	saveCurrentBoardAndItem({ group: group || 'topics', itemName, boardId });
 	// Search in database
 	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
-	console.log('DBRES=>', dbResponse);
+	console.log('DB_RES===>', dbResponse);
+	if (dbResponse && dbResponse.data)
+		return updateContactCard({ allowedFields, strColumns, email: 'a@mail.com', itemName: 'JOHN', boardUsers });
 	const boardIds = [boardId];
 	const boardResponse = fetchBoardColumnValues(boardIds); // To search email inside Monday board
 	const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
-	const sample_columns = [...rows[0].column_values, { id: 'name', type: 'name', title: 'Item Name' }]; // Remove it
-	console.log('SAMPLE_COLS=>', sample_columns);
+	// const sample_columns = [...rows[0].column_values, { id: 'name', type: 'name', title: 'Item Name' }];
 	for (let i = 0; i < rows.length; i++) {
 		let found = findEmailInBoardRow(rows[i], email);
 		if (found) return updateContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
 	}
 
-	return SaveContactCard({ allowedFields: sample_columns, strColumns, email, itemName, boardUsers });
+	return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
 }
 
 function handleLoginClick(e) {
@@ -128,30 +133,28 @@ function handleSaveContact(e) {
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
 	const sanitizedData = sanitizInputPayload({ keys, values }); // columnId,columnTyp,value
 	const currentItem = getCurrentBoardAndItem();
+	const allowedFields = getAllowedFields();
 	if (!currentItem) return;
 	const { itemName, boardId, group } = currentItem;
 	const res = createBoardItem({ boardId, group, itemName });
 	if (res.error_message) return;
 	const { id: itemId } = res.data.create_item;
 	const valueSanitized = sanitizePayloadValue(sanitizedData);
-	console.log('valueSanitized=>', valueSanitized);
+	console.log('Save Contact Payload=>', valueSanitized);
 	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });
 	const updatedExtras = updateExtraColumns(boardQuery);
 	console.log('Updated Extras=>', updatedExtras);
 	// Append settingsStr and save to Database
 	const strColumns = getColumStrSettings();
-	const settingsStrAdded = addSetingsStrToPayload(strColumns, valueSanitized);
-	console.log('SETTINGS_ADDED', settingsStrAdded);
-	const item = { id: itemId, name: itemName, column_values: settingsStrAdded };
+	const settingsStrAddedInputs = addSetingsStrToPayload(strColumns, valueSanitized);
+	// Add values & settingsStr to allowedFIelds from settingsStrAdded
+	const boarItemColValues = addValuesAndSettingsStr(allowedFields, settingsStrAddedInputs);
+	console.log('boarItemColValues===>', boarItemColValues);
+	const item = { id: itemId, name: itemName, column_values: boarItemColValues };
 	const emailField = valueSanitized.find(v => v.columnType === 'email');
 	const itemUpserted = upsertBoardItemByEmail({ email: emailField.value, item });
 	console.log('BoardItem Upserted!', itemUpserted);
 	return MessageCard('Contact saved successfully!');
-	// const message = CardService.newTextParagraph().setText('Form submitted successfully!');
-	// const updatedCard = CardService.newCardBuilder()
-	// 	.addSection(CardService.newCardSection().addWidget(message))
-	// 	.build();
-	// return updatedCard;
 }
 
 global.onGmailMessageOpen = onGmailMessageOpen;

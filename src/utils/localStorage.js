@@ -1,3 +1,15 @@
+export const saveAllowedFIelds = data => {
+	const properties = PropertiesService.getUserProperties();
+	properties.setProperty('allowedFields', JSON.stringify(data));
+};
+
+export const getAllowedFields = () => {
+	const properties = PropertiesService.getUserProperties();
+	const data = properties.getProperty('allowedFields');
+	if (!data) return null;
+	return JSON.parse(data);
+};
+
 export const saveColumStrSettings = data => {
 	const properties = PropertiesService.getUserProperties();
 	properties.setProperty('columnStr', JSON.stringify(data));
