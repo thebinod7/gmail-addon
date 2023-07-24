@@ -1,7 +1,8 @@
 export default function TextInput(input) {
-	const { id, title, type, value } = input;
-	const defaultValue = type === 'name' ? value : '';
+	const { id, title, value } = input;
 
-	const textInput = CardService.newTextInput().setFieldName(id).setTitle(title).setValue(defaultValue);
+	let textInput = CardService.newTextInput().setFieldName(id).setTitle(title);
+	if (value) textInput.setValue(value);
+
 	return textInput;
 }

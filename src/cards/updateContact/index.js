@@ -1,18 +1,19 @@
-import { fieldOrderRealign, createFormInputByType, appendEmailAndItemName } from '../../utils';
+import { fieldOrderRealign, createFormInputByType } from '../../utils';
 
-export default function updateContactCard({ email, itemName, allowedFields, boardUsers, strColumns }) {
+export default function updateContactCard({ dbResponse, boardUsers, strColumns }) {
 	let widgets;
+
+	const { item } = dbResponse;
 
 	const selectCols = strColumns.filter(f => f.type === 'color');
 
 	const cardDivider = CardService.newDivider();
 	const section = CardService.newCardSection().setHeader('Update Contact').addWidget(cardDivider);
 
-	const ordered_fields = fieldOrderRealign(allowedFields);
-	const appended = appendEmailAndItemName({ fields: ordered_fields, email, itemName });
+	const ordered_fields = fieldOrderRealign(item.column_values);
 
-	for (let f of appended) {
-		const currentSelectInput = selectCols.find(s => s.type === f.type);
+	for (let f of ordered_fields) {
+		const currentSelectInput = selectCols.find(s => s.id === f.id);
 		var _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
 		if (_input) widgets = section.addWidget(_input);
 	}

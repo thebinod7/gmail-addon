@@ -1,8 +1,7 @@
 export default function EmailInput(input) {
 	const { id, title, value } = input;
-	const textInput = CardService.newTextInput()
-		.setFieldName(id)
-		.setTitle(title)
-		.setValue(value || '');
-	return textInput;
+	let emailInput = CardService.newTextInput().setFieldName(id).setTitle(title);
+	if (value) emailInput.setValue(value);
+
+	return emailInput;
 }

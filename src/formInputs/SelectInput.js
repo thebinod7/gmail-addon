@@ -1,5 +1,5 @@
 export default function SelectInput(input, currentSelectInput) {
-	const { id, title } = input;
+	const { id, title, value } = input;
 
 	let options = [];
 
@@ -25,7 +25,8 @@ export default function SelectInput(input, currentSelectInput) {
 
 	if (options.length) {
 		for (let b of options) {
-			dropdown.addItem(b.label, b.id, false);
+			const isSelected = b.id === value ? true : false;
+			dropdown.addItem(b.label, b.id, isSelected);
 		}
 	} else {
 		dropdown.addItem('--Select--', '', true);

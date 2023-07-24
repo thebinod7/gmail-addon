@@ -93,6 +93,7 @@ function onGmailMessageOpen(e) {
 
 	const account = fetchMondayAccountDetails();
 	const accountId = account.account_id.toString();
+	console.log({ accountId });
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	if (!settings || !settings.data) return MessageCard('No settings found!');
 	const { allowedFields, board, group } = settings.data;
@@ -108,9 +109,13 @@ function onGmailMessageOpen(e) {
 	saveCurrentBoardAndItem({ group: group || 'topics', itemName, boardId });
 	// Search in database
 	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
-	console.log('DB_RES===>', dbResponse);
-	if (dbResponse && dbResponse.data)
-		return updateContactCard({ allowedFields, strColumns, email: 'a@mail.com', itemName: 'JOHN', boardUsers });
+	// if (dbResponse && dbResponse.data) {
+	// 	return updateContactCard({
+	// 		dbResponse: dbResponse.data,
+	// 		strColumns,
+	// 		boardUsers
+	// 	});
+	// }
 	const boardIds = [boardId];
 	const boardResponse = fetchBoardColumnValues(boardIds); // To search email inside Monday board
 	const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
