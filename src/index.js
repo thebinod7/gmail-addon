@@ -37,7 +37,9 @@ import {
 	saveItemId,
 	getItemId
 } from './utils/localStorage';
-import updateContactCard from './cards/updateContact';
+import { BOARD_COLUMNS } from './constants';
+
+const { NAME, EMAIL } = BOARD_COLUMNS;
 
 const onDefaultHomePageOpen = () => HomepageCard();
 
@@ -113,7 +115,7 @@ function onGmailMessageOpen(e) {
 	if (dbResponse && dbResponse.data) {
 		const { id } = dbResponse.data.item;
 		saveItemId(id);
-		return updateContactCard({
+		return UpdateContactCard({
 			dbResponse: dbResponse.data,
 			strColumns,
 			boardUsers
@@ -124,7 +126,7 @@ function onGmailMessageOpen(e) {
 	const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
 	for (let i = 0; i < rows.length; i++) {
 		let found = findEmailInBoardRow(rows[i], email);
-		if (found) return updateContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
+		if (found) return UpdateContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
 	}
 
 	return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
@@ -134,7 +136,6 @@ function handleLoginClick(e) {
 	return AuthorizationCard();
 }
 
-// TODO: Fix item name update
 function handleUpdateContact(e) {
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
 	const sanitizedData = sanitizInputPayload({ keys, values });
@@ -144,16 +145,16 @@ function handleUpdateContact(e) {
 	const { itemName, boardId } = currentItem;
 	const itemId = getItemId();
 	const valueSanitized = sanitizePayloadValue(sanitizedData);
-	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });
+	const nameField = valueSanitized.find(f => f.columnType === NAME);
+	const boardQuery = createBoardQuery({ itemName: nameField.value, itemId, boardId, boardPayload: valueSanitized });
 	const updatedExtras = updateExtraColumns(boardQuery);
 	console.log('UPDATED==>', updatedExtras);
 	const strColumns = getColumStrSettings();
 	const settingsStrAddedInputs = addSetingsStrToPayload(strColumns, valueSanitized);
 	const boarItemColValues = addValuesAndSettingsStr(allowedFields, settingsStrAddedInputs);
 	const item = { id: itemId, name: itemName, column_values: boarItemColValues };
-	const emailField = valueSanitized.find(v => v.columnType === 'email');
-	const upserted = upsertBoardItemByEmail({ email: emailField.value, item });
-	console.log('Upserted==>', upserted);
+	const emailField = valueSanitized.find(v => v.columnType === EMAIL);
+	upsertBoardItemByEmail({ email: emailField.value, item });
 	return MessageCard('Contact updated successfully!');
 }
 
@@ -179,7 +180,7 @@ function handleSaveContact(e) {
 	const boarItemColValues = addValuesAndSettingsStr(allowedFields, settingsStrAddedInputs);
 	console.log('boarItemColValues===>', boarItemColValues);
 	const item = { id: itemId, name: itemName, column_values: boarItemColValues };
-	const emailField = valueSanitized.find(v => v.columnType === 'email');
+	const emailField = valueSanitized.find(v => v.columnType === EMAIL);
 	const itemUpserted = upsertBoardItemByEmail({ email: emailField.value, item });
 	console.log('BoardItem Upserted!', itemUpserted);
 	return MessageCard('Contact saved successfully!');
