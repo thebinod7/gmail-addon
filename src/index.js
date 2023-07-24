@@ -77,17 +77,19 @@ function handleLogoutClick() {
 function fetchGmailSenderAndEmail(e) {
 	let email = '';
 	let itemName = '';
+	let emailBody = '';
 	const messageId = e.messageMetadata.messageId;
 	const thread = GmailApp.getMessageById(messageId).getThread();
+	const threadLink = thread.getPermalink();
 	const messages = thread.getMessages();
 	for (let i = 0; i < messages.length; i++) {
 		let sender = messages[i].getFrom();
 		itemName = extractCharactersBeforeSymbol(sender, '<');
 		let emailAddr = extractEmailAddress(sender);
 		email = emailAddr;
-		let body = messages[i].getBody();
+		emailBody = messages[i].getPlainBody();
 	}
-	return { email, itemName };
+	return { email, itemName, emailBody, threadLink };
 }
 
 function onGmailMessageOpen(e) {

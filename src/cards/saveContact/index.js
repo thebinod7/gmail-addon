@@ -13,7 +13,7 @@ export default function saveContactCard({ email, itemName, allowedFields, boardU
 
 	for (let f of appended) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
-		var _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
+		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
 		if (_input) widgets = section.addWidget(_input);
 	}
 

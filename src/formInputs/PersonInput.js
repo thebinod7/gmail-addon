@@ -6,9 +6,9 @@ export default function Person(input, boardUsers) {
 		.setTitle(title)
 		.setFieldName(id);
 
-	if (boardUsers.length) {
+	if (boardUsers && boardUsers.length) {
 		for (let b of boardUsers) {
-			const isSelected = value.length && b.id.toString() == value[0].value ? true : false;
+			const isSelected = value && value.length && b.id.toString() == value[0].value ? true : false;
 			dropdown.addItem(b.name, b.id.toString(), isSelected);
 		}
 	} else {
