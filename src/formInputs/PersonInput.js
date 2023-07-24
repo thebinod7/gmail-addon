@@ -8,7 +8,7 @@ export default function Person(input, boardUsers) {
 
 	if (boardUsers.length) {
 		for (let b of boardUsers) {
-			const isSelected = value.length && b.id.toString() === value[0].value ? true : false;
+			const isSelected = value.length && b.id.toString() == value[0].value ? true : false;
 			dropdown.addItem(b.name, b.id.toString(), isSelected);
 		}
 	} else {

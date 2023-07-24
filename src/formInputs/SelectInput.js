@@ -25,7 +25,7 @@ export default function SelectInput(input, currentSelectInput) {
 
 	if (options.length) {
 		for (let b of options) {
-			const isSelected = b.id === value ? true : false;
+			const isSelected = b.id === value.toString() ? true : false;
 			dropdown.addItem(b.label, b.id, isSelected);
 		}
 	} else {

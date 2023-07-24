@@ -105,34 +105,6 @@ export const checkAndAppendSettingsStr = (boardColumns, strColumns) => {
 	return finalResult;
 };
 
-export const getDefaultValueByColumnType = columnsWithValue => {
-	const result = [];
-	for (let c of columnsWithValue) {
-		var val = '';
-		if (c.type === TEXT || c.type === EMAIL || c.type === NUMBERS || c.type === DATE || c.type === PHONE) {
-			val = c.text;
-		}
-		if (c.type === LINK) {
-			const jsonData = c.value ? JSON.parse(c.value) : null;
-			val = jsonData ? jsonData.url : '';
-		}
-		if (c.type === COLOR) {
-			const jsonData = c.value ? JSON.parse(c.value) : null;
-			val = jsonData ? jsonData.index : '';
-		}
-		if (c.type === PERSON) {
-			const jsonData = c.value ? JSON.parse(c.value) : null;
-			const personValue =
-				jsonData?.personsAndTeams.map(p => {
-					return { ...p, value: p.id };
-				}) || [];
-			val = personValue;
-		}
-		result.push({ ...c, value: val });
-	}
-	return result;
-};
-
 export const createFormInputByType = ({ input, boardUsers, currentSelectInput }) => {
 	switch (input.type) {
 		case NAME: {
@@ -288,6 +260,34 @@ export const sanitizePayloadValue = payload => {
 			p.value = convertMSToNormalDate(msSinceEpoch);
 		}
 		result.push(p);
+	}
+	return result;
+};
+
+export const getDefaultValueByColumnType = columnsWithValue => {
+	const result = [];
+	for (let c of columnsWithValue) {
+		let val = '';
+		if (c.type === TEXT || c.type === EMAIL || c.type === NUMBERS || c.type === DATE || c.type === PHONE) {
+			val = c.text;
+		}
+		if (c.type === LINK) {
+			const jsonData = c.value ? JSON.parse(c.value) : null;
+			val = jsonData ? jsonData.url : '';
+		}
+		if (c.type === COLOR) {
+			const jsonData = c.value ? JSON.parse(c.value) : null;
+			val = jsonData ? jsonData.index : '';
+		}
+		if (c.type === PERSON) {
+			const jsonData = c.value ? JSON.parse(c.value) : null;
+			const personValue =
+				jsonData?.personsAndTeams.map(p => {
+					return { ...p, value: p.id };
+				}) || [];
+			val = personValue;
+		}
+		result.push({ ...c, value: val });
 	}
 	return result;
 };

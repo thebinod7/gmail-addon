@@ -96,7 +96,6 @@ function onGmailMessageOpen(e) {
 
 	const account = fetchMondayAccountDetails();
 	const accountId = account.account_id.toString();
-	console.log({ accountId });
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	if (!settings || !settings.data) return MessageCard('No settings found!');
 	const { allowedFields, board, group } = settings.data;
@@ -126,7 +125,11 @@ function onGmailMessageOpen(e) {
 	const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
 	for (let i = 0; i < rows.length; i++) {
 		let found = findEmailInBoardRow(rows[i], email);
-		if (found) return UpdateContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
+		if (found) {
+			const row = rows[i];
+			saveItemId(row.id);
+			return UpdateContactCard({ dbResponse: dbResponse.data, boardItem: row, strColumns, boardUsers });
+		}
 	}
 
 	return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
