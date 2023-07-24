@@ -33,9 +33,10 @@ import {
 	getToken,
 	saveToken,
 	saveAllowedFIelds,
-	getAllowedFields
+	getAllowedFields,
+	saveItemId,
+	getItemId
 } from './utils/localStorage';
-import { SAMPLE_DATA } from './constants';
 import updateContactCard from './cards/updateContact';
 
 const onDefaultHomePageOpen = () => HomepageCard();
@@ -109,17 +110,18 @@ function onGmailMessageOpen(e) {
 	saveCurrentBoardAndItem({ group: group || 'topics', itemName, boardId });
 	// Search in database
 	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
-	// if (dbResponse && dbResponse.data) {
-	// 	return updateContactCard({
-	// 		dbResponse: dbResponse.data,
-	// 		strColumns,
-	// 		boardUsers
-	// 	});
-	// }
+	if (dbResponse && dbResponse.data) {
+		const { id } = dbResponse.data.item;
+		saveItemId(id);
+		return updateContactCard({
+			dbResponse: dbResponse.data,
+			strColumns,
+			boardUsers
+		});
+	}
 	const boardIds = [boardId];
 	const boardResponse = fetchBoardColumnValues(boardIds); // To search email inside Monday board
 	const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
-	// const sample_columns = [...rows[0].column_values, { id: 'name', type: 'name', title: 'Item Name' }];
 	for (let i = 0; i < rows.length; i++) {
 		let found = findEmailInBoardRow(rows[i], email);
 		if (found) return updateContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
@@ -132,8 +134,29 @@ function handleLoginClick(e) {
 	return AuthorizationCard();
 }
 
-// TODO:
-// Save to DB (Remove sample data before save)
+// TODO: Fix item name update, Fix selected user
+function handleUpdateContact(e) {
+	const { keys, values } = extractObjectKeysAndValues(e.formInput);
+	const sanitizedData = sanitizInputPayload({ keys, values });
+	const currentItem = getCurrentBoardAndItem();
+	const allowedFields = getAllowedFields();
+	if (!currentItem) return;
+	const { itemName, boardId } = currentItem;
+	const itemId = getItemId();
+	const valueSanitized = sanitizePayloadValue(sanitizedData);
+	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });
+	const updatedExtras = updateExtraColumns(boardQuery);
+	console.log('UPDATED==>', updatedExtras);
+	const strColumns = getColumStrSettings();
+	const settingsStrAddedInputs = addSetingsStrToPayload(strColumns, valueSanitized);
+	const boarItemColValues = addValuesAndSettingsStr(allowedFields, settingsStrAddedInputs);
+	const item = { id: itemId, name: itemName, column_values: boarItemColValues };
+	const emailField = valueSanitized.find(v => v.columnType === 'email');
+	const upserted = upsertBoardItemByEmail({ email: emailField.value, item });
+	console.log('Upserted==>', upserted);
+	return MessageCard('Contact updated successfully!');
+}
+
 function handleSaveContact(e) {
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
 	const sanitizedData = sanitizInputPayload({ keys, values }); // columnId,columnTyp,value
@@ -169,3 +192,4 @@ global.authCallback = authCallback;
 global.handleLogoutClick = handleLogoutClick;
 global.getOAuthService = getOAuthService;
 global.handleSaveContact = handleSaveContact;
+global.handleUpdateContact = handleUpdateContact;

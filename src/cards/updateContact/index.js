@@ -22,7 +22,7 @@ export default function updateContactCard({ dbResponse, boardUsers, strColumns }
 		.setText('Logout')
 		.setOnClickAction(CardService.newAction().setFunctionName('handleLogoutClick'));
 
-	const formAction = CardService.newAction().setFunctionName('handleSaveContact');
+	const formAction = CardService.newAction().setFunctionName('handleUpdateContact');
 	const btnSubmit = CardService.newTextButton().setText('Submit').setOnClickAction(formAction);
 
 	const card = CardService.newCardBuilder().addSection(section.addWidget(btnSubmit).addWidget(btnLogout)).build();

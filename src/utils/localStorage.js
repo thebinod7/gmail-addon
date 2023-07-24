@@ -44,3 +44,14 @@ export const getToken = () => {
 	const token = properties.getProperty('access_token');
 	return token;
 };
+
+export const saveItemId = token => {
+	const properties = PropertiesService.getUserProperties();
+	properties.setProperty('itemId', token);
+};
+
+export const getItemId = () => {
+	const properties = PropertiesService.getUserProperties();
+	const token = properties.getProperty('itemId');
+	return token;
+};
