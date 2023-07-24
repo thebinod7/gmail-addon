@@ -1,5 +1,5 @@
 export default function Person(input, boardUsers) {
-	const { id, title } = input;
+	const { id, title, value } = input;
 
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
@@ -8,7 +8,8 @@ export default function Person(input, boardUsers) {
 
 	if (boardUsers.length) {
 		for (let b of boardUsers) {
-			dropdown.addItem(b.name, b.id.toString(), false);
+			const isSelected = value.length && b.id.toString() === value[0].value ? true : false;
+			dropdown.addItem(b.name, b.id.toString(), isSelected);
 		}
 	} else {
 		dropdown.addItem('--Select--', '', true);

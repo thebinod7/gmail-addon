@@ -134,7 +134,7 @@ function handleLoginClick(e) {
 	return AuthorizationCard();
 }
 
-// TODO: Fix item name update, Fix selected user
+// TODO: Fix item name update
 function handleUpdateContact(e) {
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
 	const sanitizedData = sanitizInputPayload({ keys, values });
