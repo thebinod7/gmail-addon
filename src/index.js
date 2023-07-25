@@ -130,7 +130,7 @@ function onGmailMessageOpen(e) {
 		if (found) {
 			const row = rows[i];
 			saveItemId(row.id);
-			return UpdateContactCard({ dbResponse: dbResponse.data, boardItem: row, strColumns, boardUsers });
+			return UpdateContactCard({ dbResponse: null, boardItem: row, strColumns, boardUsers });
 		}
 	}
 

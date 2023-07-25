@@ -5,7 +5,6 @@ export default function updateContactCard({ boardItem = null, dbResponse, boardU
 	let widgets;
 	let displayFields;
 
-	const { item } = dbResponse;
 	if (boardItem) {
 		let valueAdded = getDefaultValueByColumnType(boardItem.column_values);
 		const nameField = {
@@ -15,7 +14,10 @@ export default function updateContactCard({ boardItem = null, dbResponse, boardU
 			value: boardItem.name
 		};
 		displayFields = [...valueAdded, nameField];
-	} else displayFields = item.column_values;
+	} else {
+		const { item } = dbResponse;
+		displayFields = item.column_values;
+	}
 
 	const selectCols = strColumns.filter(f => f.type === 'color');
 
