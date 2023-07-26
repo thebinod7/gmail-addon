@@ -1,69 +1,41 @@
 import createCardHeader from '../widgets/CardHeader';
+import createCardFooterBtn from '../widgets/CardFooter';
+import createTabs from '../widgets/Tabs';
 
-export default function ViewContactCard() {
+export default function ViewContactCard({}) {
 	return buildCard();
 }
 
 function buildCard() {
 	const CardHeader = createCardHeader({});
-	let cardFooter1Button1Action1 = CardService.newAction().setFunctionName('TODO').setParameters({});
+	const CardFooterBtn = createCardFooterBtn();
+	const { BtnContactTab, BtnUpdatesTab } = createTabs({ activeTab: 'Contact' });
 
-	let cardFooter1Button1 = CardService.newTextButton()
-		.setText('View Item')
-		.setOnClickAction(cardFooter1Button1Action1);
+	const CardFooter = CardService.newFixedFooter().setPrimaryButton(CardFooterBtn);
+	const sectionTabsList = CardService.newButtonSet().addButton(BtnContactTab).addButton(BtnUpdatesTab);
 
-	let cardFooter1 = CardService.newFixedFooter().setPrimaryButton(cardFooter1Button1);
+	const TextInput1 = CardService.newTextInput().setFieldName('fieldName').setTitle('Item name').setMultiline(false);
+	const TextInput2 = CardService.newTextInput().setFieldName('fieldName').setTitle('Item email').setMultiline(false);
 
-	let cardSection1ButtonList1 = CardService.newButtonSet();
+	const updateContactAction = CardService.newAction().setFunctionName('handleUpdateContact').setParameters({});
 
-	let cardSection1ButtonList2Button1Action1 = CardService.newAction().setFunctionName('TODO').setParameters({});
-
-	let cardSection1ButtonList2Button1 = CardService.newTextButton()
-		.setText('Contact')
-		.setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-		.setOnClickAction(cardSection1ButtonList2Button1Action1);
-
-	let updateTabAction = CardService.newAction().setFunctionName('handleUpdateTabClick').setParameters({});
-
-	let cardSection1ButtonList2Button2 = CardService.newTextButton()
-		.setText('Updates')
+	const btnUpdateContact = CardService.newTextButton()
+		.setText('Update Contact')
 		.setTextButtonStyle(CardService.TextButtonStyle.TEXT)
-		.setOnClickAction(updateTabAction);
+		.setOnClickAction(updateContactAction);
 
-	let cardSection1ButtonList2 = CardService.newButtonSet()
-		.addButton(cardSection1ButtonList2Button1)
-		.addButton(cardSection1ButtonList2Button2);
+	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);
 
-	let cardSection1TextInput1 = CardService.newTextInput()
-		.setFieldName('fieldName')
-		.setTitle('Item name')
-		.setMultiline(false);
+	const cardSection = CardService.newCardSection()
+		.addWidget(sectionTabsList)
+		.addWidget(TextInput1)
+		.addWidget(TextInput2)
+		.addWidget(cardSectionUpdateBtn);
 
-	let cardSection1TextInput2 = CardService.newTextInput()
-		.setFieldName('fieldName')
-		.setTitle('Item email')
-		.setMultiline(false);
-
-	let cardSection1ButtonList3Button1Action1 = CardService.newAction().setFunctionName('TODO').setParameters({});
-
-	let cardSection1ButtonList3Button1 = CardService.newTextButton()
-		.setText('Save')
-		.setTextButtonStyle(CardService.TextButtonStyle.TEXT)
-		.setOnClickAction(cardSection1ButtonList3Button1Action1);
-
-	let cardSection1ButtonList3 = CardService.newButtonSet().addButton(cardSection1ButtonList3Button1);
-
-	let cardSection1 = CardService.newCardSection()
-		.addWidget(cardSection1ButtonList1)
-		.addWidget(cardSection1ButtonList2)
-		.addWidget(cardSection1TextInput1)
-		.addWidget(cardSection1TextInput2)
-		.addWidget(cardSection1ButtonList3);
-
-	let card = CardService.newCardBuilder()
+	const card = CardService.newCardBuilder()
 		.setHeader(CardHeader)
-		.setFixedFooter(cardFooter1)
-		.addSection(cardSection1)
+		.setFixedFooter(CardFooter)
+		.addSection(cardSection)
 		.build();
 	return card;
 }

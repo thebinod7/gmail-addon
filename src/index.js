@@ -109,7 +109,7 @@ function onGmailMessageOpen(e) {
 	const accountId = account.account_id.toString();
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	if (!settings || !settings.data) return MessageCard('No settings found!');
-	return ViewContactCard();
+	// return ViewContactCard();
 	const { allowedFields, board, group } = settings.data;
 	const boardId = board.value;
 	saveAllowedFIelds(allowedFields);
@@ -126,7 +126,7 @@ function onGmailMessageOpen(e) {
 	if (dbResponse && dbResponse.data) {
 		const { id } = dbResponse.data.item;
 		saveItemId(id);
-		return UpdateContactCard({
+		return ViewContactCard({
 			dbResponse: dbResponse.data,
 			strColumns,
 			boardUsers
@@ -140,7 +140,7 @@ function onGmailMessageOpen(e) {
 		if (found) {
 			const row = rows[i];
 			saveItemId(row.id);
-			return UpdateContactCard({ dbResponse: null, boardItem: row, strColumns, boardUsers });
+			return ViewContactCard({ dbResponse: null, boardItem: row, strColumns, boardUsers });
 		}
 	}
 
@@ -202,8 +202,12 @@ function handleSaveContact(e) {
 }
 
 function handleUpdateTabClick() {
-	console.log('ITEM_UPATES');
-	return ItemUpdatesCard();
+	console.log('Updates Tab');
+	return ItemUpdatesCard({});
+}
+
+function handleContactTabClick() {
+	console.log('Contact Tab');
 }
 
 global.onGmailMessageOpen = onGmailMessageOpen;
@@ -215,3 +219,4 @@ global.getOAuthService = getOAuthService;
 global.handleSaveContact = handleSaveContact;
 global.handleUpdateContact = handleUpdateContact;
 global.handleUpdateTabClick = handleUpdateTabClick;
+global.handleContactTabClick = handleContactTabClick;
