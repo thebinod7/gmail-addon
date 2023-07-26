@@ -101,7 +101,7 @@ function fetchGmailSenderAndEmail(e) {
 	return { email, itemName, emailBody, threadLink };
 }
 
-function onGmailMessageOpen(e) {
+function initGmailHomeUI({ email, itemName }) {
 	const accessToken = getToken();
 	if (!accessToken) return AuthCard();
 
@@ -109,8 +109,8 @@ function onGmailMessageOpen(e) {
 	const accountId = account.account_id.toString();
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	if (!settings || !settings.data) return MessageCard('No settings found!');
-	// return ViewContactCard();
 	const { allowedFields, board, group } = settings.data;
+
 	const boardId = board.value;
 	saveAllowedFIelds(allowedFields);
 	const { data: settingsStrRes } = fetchBoardSettingsStr(boardId);
@@ -119,8 +119,7 @@ function onGmailMessageOpen(e) {
 	saveColumStrSettings(strColumns);
 	const boardUsers = boardUserData.boards[0].subscribers;
 
-	const { email, itemName } = fetchGmailSenderAndEmail(e);
-	saveCurrentBoardAndItem({ group: group || 'topics', itemName, boardId });
+	saveCurrentBoardAndItem({ email, group: group || 'topics', itemName, boardId });
 	// Search in database
 	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
 	if (dbResponse && dbResponse.data) {
@@ -145,6 +144,11 @@ function onGmailMessageOpen(e) {
 	}
 
 	return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
+}
+
+function onGmailMessageOpen(e) {
+	const { email = '', itemName = '' } = fetchGmailSenderAndEmail(e);
+	return initGmailHomeUI({ email, itemName });
 }
 
 function handleLoginClick(e) {
@@ -208,6 +212,8 @@ function handleUpdateTabClick() {
 
 function handleContactTabClick() {
 	console.log('Contact Tab');
+	const { itemName = '', email = '' } = getCurrentBoardAndItem();
+	return initGmailHomeUI({ itemName, email });
 }
 
 global.onGmailMessageOpen = onGmailMessageOpen;
