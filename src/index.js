@@ -244,6 +244,12 @@ function handleContactTabClick() {
 	return initGmailHomeUI({ itemName, email });
 }
 
+function handleViewItemClick() {
+	const itemId = getItemId();
+	const { boardId } = getCurrentBoardAndItem();
+	console.log({ boardId });
+}
+
 global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
@@ -255,3 +261,4 @@ global.handleUpdateContact = handleUpdateContact;
 global.handleUpdateTabClick = handleUpdateTabClick;
 global.handleContactTabClick = handleContactTabClick;
 global.handleItemUpdateClick = handleItemUpdateClick;
+global.handleViewItemClick = handleViewItemClick;

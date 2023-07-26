@@ -1,5 +1,5 @@
 export default function CardFooter() {
-	let cardFooterAction = CardService.newAction().setFunctionName('TODO').setParameters({});
+	let cardFooterAction = CardService.newAction().setFunctionName('handleViewItemClick').setParameters({});
 
 	const cardFooterBtn = CardService.newTextButton().setText('View Item').setOnClickAction(cardFooterAction);
 
