@@ -4,7 +4,7 @@ import createTabs from '../widgets/Tabs';
 import ParagraphText from '../widgets/ParagraphText';
 import DecoratedText from '../widgets/DecoratedText';
 
-import { concatenateDots } from '../../utils';
+import { concatenateDots, formatISODateString } from '../../utils';
 
 export default function ItemUpdatesCard({ itemName, email, itemUpdatesList }) {
 	console.log('====>', itemUpdatesList);
@@ -55,7 +55,8 @@ function buildCard({ itemName, email, itemUpdatesList }) {
 	if (itemUpdatesList.length) {
 		for (let item of itemUpdatesList) {
 			const topLabel = concatenateDots(item.body, 240); // 240 characters...
-			const bottomLabel = `${item.creator.name},    ${item.created_at}`;
+			const { date } = formatISODateString(item.created_at);
+			const bottomLabel = `${item.creator.name},     ${date}`;
 			const decorated = DecoratedText({ topLabel, bottomLabel });
 			cardSection.addWidget(decorated);
 		}

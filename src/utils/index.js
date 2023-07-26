@@ -342,3 +342,34 @@ export const concatenateDots = (text, maxLength) => {
 	if (text.length <= maxLength) return text;
 	return text.substring(0, maxLength) + '...';
 };
+
+export const formatISODateString = isoString => {
+	const date = new Date(isoString);
+
+	// Extracting the date components
+	const year = date.getFullYear();
+	const month = date.getMonth() + 1; // Months are zero-based, so add 1
+	const day = date.getDate();
+
+	// Extracting the time components
+	let hours = date.getHours();
+	const minutes = date.getMinutes();
+	const seconds = date.getSeconds();
+
+	// Determine AM or PM
+	const amOrPm = hours >= 12 ? 'PM' : 'AM';
+	// Convert to 12-hour format
+	hours %= 12;
+	hours = hours || 12; // Handle 0 (midnight) as 12 AM
+
+	// Creating formatted strings for date and time
+	const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+	const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+		.toString()
+		.padStart(2, '0')} ${amOrPm}`;
+
+	return {
+		date: formattedDate,
+		time: formattedTime
+	};
+};
