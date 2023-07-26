@@ -206,12 +206,11 @@ function handleSaveContact(e) {
 }
 
 function handleUpdateTabClick() {
-	console.log('Updates Tab');
-	return ItemUpdatesCard({});
+	const { itemName = '', email = '' } = getCurrentBoardAndItem();
+	return ItemUpdatesCard({ itemName, email });
 }
 
 function handleContactTabClick() {
-	console.log('Contact Tab');
 	const { itemName = '', email = '' } = getCurrentBoardAndItem();
 	return initGmailHomeUI({ itemName, email });
 }

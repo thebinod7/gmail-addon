@@ -2,40 +2,70 @@ import createCardHeader from '../widgets/CardHeader';
 import createCardFooterBtn from '../widgets/CardFooter';
 import createTabs from '../widgets/Tabs';
 
-export default function ItemUpdatesCard({}) {
-	return buildCard();
+export default function ItemUpdatesCard({ itemName, email }) {
+	return buildCard({ itemName, email });
 }
 
-function buildCard() {
-	const CardHeader = createCardHeader({ itemName: 'Item update', email: 'example@mail.com' });
+function buildCard({ itemName, email }) {
+	const CardHeader = createCardHeader({ itemName, email });
 	const CardFooterBtn = createCardFooterBtn();
 	const { BtnContactTab, BtnUpdatesTab } = createTabs({ activeTab: 'Updates' });
 
 	const CardFooter = CardService.newFixedFooter().setPrimaryButton(CardFooterBtn);
 	const sectionTabsList = CardService.newButtonSet().addButton(BtnContactTab).addButton(BtnUpdatesTab);
 
-	const TextInput1 = CardService.newTextInput().setFieldName('fieldName').setTitle('Item name').setMultiline(false);
-	const TextInput2 = CardService.newTextInput().setFieldName('fieldName').setTitle('Item email').setMultiline(false);
+	const UpdateInputBox = CardService.newTextInput()
+		.setFieldName('itemUpdate')
+		.setTitle('New Update')
+		.setMultiline(true);
+
+	// const MyCheckbox = CardService.newSelectionInput()
+	// 	.setFieldName('selectEmailContent')
+	// 	.setTitle('')
+	// 	.setType(CardService.SelectionInputType.CHECK_BOX)
+	// 	.addItem('Add email content & URL', 'add_email_content', false);
+
+	let cardDivider = CardService.newDivider();
+
+	let addEmailCheckbox = CardService.newSwitch()
+		.setControlType(CardService.SwitchControlType.CHECK_BOX)
+		.setFieldName('addEmailContent');
+
+	const cardSectionCheckbox = CardService.newDecoratedText()
+		.setText('Add email content & URL')
+		.setSwitchControl(addEmailCheckbox);
 
 	const updateContactAction = CardService.newAction().setFunctionName('TODO').setParameters({});
 
 	const btnUpdateContact = CardService.newTextButton()
-		.setText('Submit Updates')
+		.setText('Submit')
 		.setTextButtonStyle(CardService.TextButtonStyle.TEXT)
 		.setOnClickAction(updateContactAction);
+
+	const itemListCardHeading = CardService.newTextParagraph().setText('All updates!');
+	const decoratedText = CardService.newDecoratedText()
+		.setText('John Doe')
+		.setBottomLabel('Software engineer, July 26th 2023, 1:12:30 pm')
+		.setWrapText(true);
 
 	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);
 
 	const cardSection = CardService.newCardSection()
 		.addWidget(sectionTabsList)
-		.addWidget(TextInput1)
-		.addWidget(TextInput2)
+		.addWidget(UpdateInputBox)
+		.addWidget(cardSectionCheckbox)
 		.addWidget(cardSectionUpdateBtn);
+
+	const cardSection2 = CardService.newCardSection()
+		.addWidget(itemListCardHeading)
+		.addWidget(decoratedText)
+		.addWidget(decoratedText);
 
 	const card = CardService.newCardBuilder()
 		.setHeader(CardHeader)
 		.setFixedFooter(CardFooter)
 		.addSection(cardSection)
+		.addSection(cardSection2)
 		.build();
 	return card;
 }
