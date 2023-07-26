@@ -16,6 +16,10 @@ const BOARD_COLUMNS_MAPPING = {
 	LOOKUP: 'lookup'
 };
 module.exports = {
+	MENU_TABS: {
+		CONTACT: 'Contact',
+		UPDATES: 'Updates'
+	},
 	BOARD_COLUMNS: BOARD_COLUMNS_MAPPING,
 	SAMPLE_DATA: [
 		{ id: 'name', type: 'name', title: 'Item Name', text: '', value: '' },
