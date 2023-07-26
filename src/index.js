@@ -21,7 +21,8 @@ import {
 	updateExtraColumns,
 	fetchBoardSettingsStr,
 	fetchUsersByBoard,
-	createItemUpdate
+	createItemUpdate,
+	listItemUpdates
 } from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings, upsertBoardItemByEmail } from './services/offsite';
 import {
@@ -226,8 +227,16 @@ function handleItemUpdateClick(e) {
 }
 
 function handleUpdateTabClick() {
-	const { itemName = '', email = '' } = getCurrentBoardAndItem();
-	return ItemUpdatesCard({ itemName, email });
+	let itemUpdatesList = [];
+	const itemId = getItemId();
+	const { itemName = '', email = '', boardId } = getCurrentBoardAndItem();
+	const items = listItemUpdates({ itemId, boardId });
+	const boards = items && items.data ? items.data.boards : [];
+	if (boards.length) {
+		const { updates } = boards[0];
+		itemUpdatesList = updates.filter(f => f.item_id === itemId);
+	}
+	return ItemUpdatesCard({ itemName, email, itemUpdatesList });
 }
 
 function handleContactTabClick() {

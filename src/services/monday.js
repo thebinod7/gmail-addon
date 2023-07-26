@@ -23,9 +23,27 @@ export const updateExtraColumns = query => {
 	return JSON.parse(res);
 };
 
+export const listItemUpdates = ({ boardId, itemId }) => {
+	const accessToken = getToken();
+	const query = `query { boards(ids:${boardId}, limit:${BOARD_ITEMS_LIMIT}) { items(ids:${itemId}) { id name } updates{id item_id body created_at creator{name id} } } }`;
+	const headers = {
+		Authorization: accessToken,
+		'Content-Type': 'application/json'
+	};
+	const options = {
+		method: 'post',
+		contentType: 'application/json',
+		muteHttpExceptions: true,
+		headers: headers,
+		payload: JSON.stringify({ query: query })
+	};
+	const res = UrlFetchApp.fetch(MONDAY_API_ENDPOINT, options);
+	return JSON.parse(res);
+};
+
 export const createItemUpdate = ({ itemId, updateText }) => {
 	const accessToken = getToken();
-	let query = `mutation { create_update (item_id: ${itemId}, body: \"${updateText}\") { id }}`;
+	const query = `mutation { create_update (item_id: ${itemId}, body: \"${updateText}\") { id }}`;
 	const headers = {
 		Authorization: accessToken,
 		'Content-Type': 'application/json'

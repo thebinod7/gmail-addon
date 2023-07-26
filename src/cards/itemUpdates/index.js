@@ -2,7 +2,8 @@ import createCardHeader from '../widgets/CardHeader';
 import createCardFooterBtn from '../widgets/CardFooter';
 import createTabs from '../widgets/Tabs';
 
-export default function ItemUpdatesCard({ itemName, email }) {
+export default function ItemUpdatesCard({ itemName, email, itemUpdatesList }) {
+	console.log('====>', itemUpdatesList);
 	return buildCard({ itemName, email });
 }
 
