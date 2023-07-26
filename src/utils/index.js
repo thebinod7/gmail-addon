@@ -18,6 +18,7 @@ const {
 	LONG_TEXT,
 	RATING
 } = BOARD_COLUMNS;
+const INBOX_CONTENT_LEN = 1000;
 
 export const addValuesAndSettingsStr = (allowedFields, settingsStrAddedInputs) => {
 	let result = [];
@@ -323,3 +324,21 @@ export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload 
 		}
 	  }`;
 };
+
+export const sanitizeUpdateMsg = ({ threadLink, updateText, emailBody, selectEmailContent }) => {
+	let msg = updateText;
+	if (selectEmailContent) {
+		const cleanText = emailBody.replace(/\s+/g, ' ');
+		const sanitizedContent = concatenateDots(cleanText.trim(), INBOX_CONTENT_LEN);
+		console.log('SNA==>', sanitizedContent);
+		msg = `MESSAGE: ${
+			updateText || 'No custom message!'
+		} <br/> LINK: ${threadLink} <br/> INBOX: <br/> ${sanitizedContent} `;
+	}
+	return msg;
+};
+
+function concatenateDots(text, maxLength) {
+	if (text.length <= maxLength) return text;
+	return text.substring(0, maxLength) + '...';
+}

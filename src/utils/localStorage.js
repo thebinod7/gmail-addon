@@ -22,6 +22,18 @@ export const getColumStrSettings = () => {
 	return JSON.parse(data);
 };
 
+export const saveScrapedEmailData = data => {
+	const properties = PropertiesService.getUserProperties();
+	properties.setProperty('emailData', JSON.stringify(data));
+};
+
+export const getScrapedEmailData = () => {
+	const properties = PropertiesService.getUserProperties();
+	const data = properties.getProperty('emailData');
+	if (!data) return null;
+	return JSON.parse(data);
+};
+
 export const saveCurrentBoardAndItem = data => {
 	const properties = PropertiesService.getUserProperties();
 	properties.setProperty('currentBoardAndItem', JSON.stringify(data));

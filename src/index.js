@@ -20,7 +20,8 @@ import {
 	createBoardItem,
 	updateExtraColumns,
 	fetchBoardSettingsStr,
-	fetchUsersByBoard
+	fetchUsersByBoard,
+	createItemUpdate
 } from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings, upsertBoardItemByEmail } from './services/offsite';
 import {
@@ -32,7 +33,8 @@ import {
 	createBoardQuery,
 	sanitizePayloadValue,
 	addSetingsStrToPayload,
-	addValuesAndSettingsStr
+	addValuesAndSettingsStr,
+	sanitizeUpdateMsg
 } from './utils';
 import {
 	saveCurrentBoardAndItem,
@@ -44,7 +46,9 @@ import {
 	saveAllowedFIelds,
 	getAllowedFields,
 	saveItemId,
-	getItemId
+	getItemId,
+	saveScrapedEmailData,
+	getScrapedEmailData
 } from './utils/localStorage';
 import { BOARD_COLUMNS } from './constants';
 
@@ -98,7 +102,9 @@ function fetchGmailSenderAndEmail(e) {
 		email = emailAddr;
 		emailBody = messages[i].getPlainBody();
 	}
-	return { email, itemName, emailBody, threadLink };
+	const data = { email, itemName, emailBody, threadLink };
+	saveScrapedEmailData(data);
+	return data;
 }
 
 function initGmailHomeUI({ email, itemName }) {
@@ -205,6 +211,20 @@ function handleSaveContact(e) {
 	return MessageCard('Contact saved successfully!');
 }
 
+function handleItemUpdateClick(e) {
+	try {
+		const itemId = getItemId();
+		const { threadLink, emailBody } = getScrapedEmailData();
+		const { updateText, selectEmailContent } = e.formInput;
+		const msg = sanitizeUpdateMsg({ updateText, threadLink, emailBody, selectEmailContent });
+		if (!msg) return;
+		createItemUpdate({ itemId, updateText: msg });
+		return MessageCard('Item Update created successfully!');
+	} catch (err) {
+		console.log('ItemUpdateErr:', err);
+	}
+}
+
 function handleUpdateTabClick() {
 	const { itemName = '', email = '' } = getCurrentBoardAndItem();
 	return ItemUpdatesCard({ itemName, email });
@@ -225,3 +245,4 @@ global.handleSaveContact = handleSaveContact;
 global.handleUpdateContact = handleUpdateContact;
 global.handleUpdateTabClick = handleUpdateTabClick;
 global.handleContactTabClick = handleContactTabClick;
+global.handleItemUpdateClick = handleItemUpdateClick;

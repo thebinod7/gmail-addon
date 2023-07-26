@@ -15,27 +15,17 @@ function buildCard({ itemName, email }) {
 	const sectionTabsList = CardService.newButtonSet().addButton(BtnContactTab).addButton(BtnUpdatesTab);
 
 	const UpdateInputBox = CardService.newTextInput()
-		.setFieldName('itemUpdate')
+		.setFieldName('updateText')
 		.setTitle('New Update')
 		.setMultiline(true);
 
-	// const MyCheckbox = CardService.newSelectionInput()
-	// 	.setFieldName('selectEmailContent')
-	// 	.setTitle('')
-	// 	.setType(CardService.SelectionInputType.CHECK_BOX)
-	// 	.addItem('Add email content & URL', 'add_email_content', false);
+	const MyCheckbox = CardService.newSelectionInput()
+		.setFieldName('selectEmailContent')
+		.setTitle('')
+		.setType(CardService.SelectionInputType.CHECK_BOX)
+		.addItem('Add email content & URL', 'add_email_content', false);
 
-	let cardDivider = CardService.newDivider();
-
-	let addEmailCheckbox = CardService.newSwitch()
-		.setControlType(CardService.SwitchControlType.CHECK_BOX)
-		.setFieldName('addEmailContent');
-
-	const cardSectionCheckbox = CardService.newDecoratedText()
-		.setText('Add email content & URL')
-		.setSwitchControl(addEmailCheckbox);
-
-	const updateContactAction = CardService.newAction().setFunctionName('TODO').setParameters({});
+	const updateContactAction = CardService.newAction().setFunctionName('handleItemUpdateClick');
 
 	const btnUpdateContact = CardService.newTextButton()
 		.setText('Submit')
@@ -53,7 +43,7 @@ function buildCard({ itemName, email }) {
 	const cardSection = CardService.newCardSection()
 		.addWidget(sectionTabsList)
 		.addWidget(UpdateInputBox)
-		.addWidget(cardSectionCheckbox)
+		.addWidget(MyCheckbox)
 		.addWidget(cardSectionUpdateBtn);
 
 	const cardSection2 = CardService.newCardSection()

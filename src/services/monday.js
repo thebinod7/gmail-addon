@@ -23,6 +23,24 @@ export const updateExtraColumns = query => {
 	return JSON.parse(res);
 };
 
+export const createItemUpdate = ({ itemId, updateText }) => {
+	const accessToken = getToken();
+	let query = `mutation { create_update (item_id: ${itemId}, body: \"${updateText}\") { id }}`;
+	const headers = {
+		Authorization: accessToken,
+		'Content-Type': 'application/json'
+	};
+	const options = {
+		method: 'post',
+		contentType: 'application/json',
+		muteHttpExceptions: true,
+		headers: headers,
+		payload: JSON.stringify({ query: query })
+	};
+	const res = UrlFetchApp.fetch(MONDAY_API_ENDPOINT, options);
+	return JSON.parse(res);
+};
+
 export const createBoardItem = ({ boardId, group = 'topics', itemName }) => {
 	const accessToken = getToken();
 	let query = `mutation { create_item (board_id: ${boardId}, group_id: \"${group}\", item_name: \"${itemName}\") { id }}`;
