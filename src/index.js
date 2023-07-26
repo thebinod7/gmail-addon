@@ -3,7 +3,16 @@ const MONDAY_CLIENT_ID = process.env.APP_CLIENT_ID;
 const MONDAY_CLIENT_SECRET = process.env.CLIENT_SECRET;
 const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
 
-import { HomepageCard, AuthCard, SaveContactCard, UpdateContactCard, MessageCard, AuthorizationCard } from './cards';
+import {
+	HomepageCard,
+	ItemUpdatesCard,
+	AuthCard,
+	SaveContactCard,
+	UpdateContactCard,
+	MessageCard,
+	AuthorizationCard,
+	ViewContactCard
+} from './cards';
 import {
 	fetchMondayAccessToken,
 	fetchMondayAccountDetails,
@@ -100,6 +109,7 @@ function onGmailMessageOpen(e) {
 	const accountId = account.account_id.toString();
 	const settings = fetchGmailSettings(accountId); // For allowed fields display
 	if (!settings || !settings.data) return MessageCard('No settings found!');
+	return ViewContactCard();
 	const { allowedFields, board, group } = settings.data;
 	const boardId = board.value;
 	saveAllowedFIelds(allowedFields);
@@ -191,6 +201,11 @@ function handleSaveContact(e) {
 	return MessageCard('Contact saved successfully!');
 }
 
+function handleUpdateTabClick() {
+	console.log('ITEM_UPATES');
+	return ItemUpdatesCard();
+}
+
 global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
@@ -199,3 +214,4 @@ global.handleLogoutClick = handleLogoutClick;
 global.getOAuthService = getOAuthService;
 global.handleSaveContact = handleSaveContact;
 global.handleUpdateContact = handleUpdateContact;
+global.handleUpdateTabClick = handleUpdateTabClick;
