@@ -1,7 +1,3 @@
-Display update UI with all fields (From DB)
-Display update UI with all fields (From Monday board)
-Populate all fields
-Save form values to board and database
-
-Display item updates list
-Save inbox content as an item update
+Make TAB UI
+List item updates
+Create item updates
