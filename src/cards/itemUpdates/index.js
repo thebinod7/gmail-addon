@@ -1,13 +1,19 @@
 import createCardHeader from '../widgets/CardHeader';
 import createCardFooterBtn from '../widgets/CardFooter';
 import createTabs from '../widgets/Tabs';
+import ParagraphText from '../widgets/ParagraphText';
+import DecoratedText from '../widgets/DecoratedText';
+
+import { concatenateDots } from '../../utils';
 
 export default function ItemUpdatesCard({ itemName, email, itemUpdatesList }) {
 	console.log('====>', itemUpdatesList);
-	return buildCard({ itemName, email });
+	return buildCard({ itemName, email, itemUpdatesList });
 }
 
-function buildCard({ itemName, email }) {
+function buildCard({ itemName, email, itemUpdatesList }) {
+	let widgets;
+
 	const CardHeader = createCardHeader({ itemName, email });
 	const CardFooterBtn = createCardFooterBtn();
 	const { BtnContactTab, BtnUpdatesTab } = createTabs({ activeTab: 'Updates' });
@@ -47,10 +53,18 @@ function buildCard({ itemName, email }) {
 		.addWidget(MyCheckbox)
 		.addWidget(cardSectionUpdateBtn);
 
-	const cardSection2 = CardService.newCardSection()
-		.addWidget(itemListCardHeading)
-		.addWidget(decoratedText)
-		.addWidget(decoratedText);
+	let cardSection2 = CardService.newCardSection().addWidget(itemListCardHeading);
+
+	if (itemUpdatesList.length) {
+		for (let item of itemUpdatesList) {
+			const topLabel = concatenateDots(item.body, 240); // 240 characters...
+			const bottomLabel = `${item.creator.name},    ${item.created_at}`;
+			const decorated = DecoratedText({ topLabel, bottomLabel });
+			cardSection.addWidget(decorated);
+		}
+	} else {
+		cardSection.addWidget(ParagraphText);
+	}
 
 	const card = CardService.newCardBuilder()
 		.setHeader(CardHeader)

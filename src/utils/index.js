@@ -338,7 +338,7 @@ export const sanitizeUpdateMsg = ({ threadLink, updateText, emailBody, selectEma
 	return msg;
 };
 
-function concatenateDots(text, maxLength) {
+export const concatenateDots = (text, maxLength) => {
 	if (text.length <= maxLength) return text;
 	return text.substring(0, maxLength) + '...';
-}
+};
