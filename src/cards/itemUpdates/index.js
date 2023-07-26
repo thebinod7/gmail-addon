@@ -39,11 +39,8 @@ function buildCard({ itemName, email, itemUpdatesList }) {
 		.setTextButtonStyle(CardService.TextButtonStyle.TEXT)
 		.setOnClickAction(updateContactAction);
 
-	const itemListCardHeading = CardService.newTextParagraph().setText('All updates!');
-	const decoratedText = CardService.newDecoratedText()
-		.setText('John Doe')
-		.setBottomLabel('Software engineer, July 26th 2023, 1:12:30 pm')
-		.setWrapText(true);
+	const itemListCardHeading = CardService.newTextParagraph().setText('All Updates:');
+	const cardDivider = CardService.newDivider();
 
 	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);
 
@@ -51,9 +48,9 @@ function buildCard({ itemName, email, itemUpdatesList }) {
 		.addWidget(sectionTabsList)
 		.addWidget(UpdateInputBox)
 		.addWidget(MyCheckbox)
-		.addWidget(cardSectionUpdateBtn);
-
-	let cardSection2 = CardService.newCardSection().addWidget(itemListCardHeading);
+		.addWidget(cardSectionUpdateBtn)
+		.addWidget(cardDivider)
+		.addWidget(itemListCardHeading);
 
 	if (itemUpdatesList.length) {
 		for (let item of itemUpdatesList) {
@@ -63,14 +60,14 @@ function buildCard({ itemName, email, itemUpdatesList }) {
 			cardSection.addWidget(decorated);
 		}
 	} else {
-		cardSection.addWidget(ParagraphText);
+		const para = ParagraphText('No item updates found!');
+		cardSection.addWidget(para);
 	}
 
 	const card = CardService.newCardBuilder()
 		.setHeader(CardHeader)
 		.setFixedFooter(CardFooter)
 		.addSection(cardSection)
-		.addSection(cardSection2)
 		.build();
 	return card;
 }
