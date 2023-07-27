@@ -230,8 +230,7 @@ function handleSaveContact(e) {
 	console.log('boarItemColValues===>', boarItemColValues);
 	const item = { id: itemId, name: itemName, column_values: boarItemColValues };
 	const emailField = valueSanitized.find(v => v.columnType === EMAIL);
-	const itemUpserted = upsertBoardItemByEmail({ email: emailField.value, item });
-	console.log('BoardItem Upserted!', itemUpserted);
+	upsertBoardItemByEmail({ email: emailField.value, item });
 	return MessageCard('Contact saved successfully!');
 }
 

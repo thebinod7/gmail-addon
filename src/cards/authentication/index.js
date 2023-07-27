@@ -1,6 +1,10 @@
 const OFFSITE_INSTALL_URL = process.env.MONDAY_SHARE_URL;
 
 export default function authenticationCard() {
+	const cardDivder = CardService.newDivider();
+
+	const firstTimeMsg = CardService.newTextParagraph().setText('First time user?');
+
 	const btnInstall = CardService.newTextButton()
 		.setText('Install Monday')
 		.setOpenLink(CardService.newOpenLink().setUrl(OFFSITE_INSTALL_URL).setOpenAs(CardService.OpenAs.FULL_SIZE))
@@ -10,10 +14,17 @@ export default function authenticationCard() {
 		.setText('Login to Monday')
 		.setOnClickAction(CardService.newAction().setFunctionName('handleLoginClick'));
 
-	const msg = CardService.newTextParagraph().setText('Install Monday app if you are a first time user.');
+	const installedMsg = CardService.newTextParagraph().setText('Already installed?');
 
 	const updatedCard = CardService.newCardBuilder()
-		.addSection(CardService.newCardSection().addWidget(msg).addWidget(btnInstall).addWidget(btnAuth))
+		.addSection(
+			CardService.newCardSection()
+				.addWidget(firstTimeMsg)
+				.addWidget(btnInstall)
+				.addWidget(cardDivder)
+				.addWidget(installedMsg)
+				.addWidget(btnAuth)
+		)
 		.build();
 	return updatedCard;
 }
