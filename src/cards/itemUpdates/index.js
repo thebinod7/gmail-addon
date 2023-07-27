@@ -5,18 +5,16 @@ import ParagraphText from '../widgets/ParagraphText';
 import DecoratedText from '../widgets/DecoratedText';
 
 import { concatenateDots, formatISODateString } from '../../utils';
+import { MENU_TABS } from '../../constants';
 
 export default function ItemUpdatesCard({ itemName, email, itemUpdatesList }) {
-	console.log('====>', itemUpdatesList);
 	return buildCard({ itemName, email, itemUpdatesList });
 }
 
 function buildCard({ itemName, email, itemUpdatesList }) {
-	let widgets;
-
 	const CardHeader = createCardHeader({ itemName, email });
 	const CardFooterBtn = createCardFooterBtn();
-	const { BtnContactTab, BtnUpdatesTab } = createTabs({ activeTab: 'Updates' });
+	const { BtnContactTab, BtnUpdatesTab } = createTabs({ activeTab: MENU_TABS.UPDATES });
 
 	const CardFooter = CardService.newFixedFooter().setPrimaryButton(CardFooterBtn);
 	const sectionTabsList = CardService.newButtonSet().addButton(BtnContactTab).addButton(BtnUpdatesTab);

@@ -8,7 +8,6 @@ import {
 	ItemUpdatesCard,
 	AuthCard,
 	SaveContactCard,
-	UpdateContactCard,
 	MessageCard,
 	AuthorizationCard,
 	ViewContactCard
@@ -51,6 +50,8 @@ import {
 	saveScrapedEmailData,
 	getScrapedEmailData
 } from './utils/localStorage';
+import Notify from './cards/widgets/Notify';
+
 import { BOARD_COLUMNS } from './constants';
 
 const { NAME, EMAIL } = BOARD_COLUMNS;
@@ -197,7 +198,7 @@ function handleUpdateContact(e) {
 		console.log('EM==>', emailField);
 		const upserted = upsertBoardItemByEmail({ email: emailField.value, item });
 		console.log('Upserted=>', upserted);
-		return MessageCard('Contact updated successfully!');
+		return Notify({ message: 'Contact updated successfully!' });
 	} catch (err) {
 		console.log('UpdateContactErr:', err);
 	}
@@ -231,7 +232,7 @@ function handleSaveContact(e) {
 	const item = { id: itemId, name: itemName, column_values: boarItemColValues };
 	const emailField = valueSanitized.find(v => v.columnType === EMAIL);
 	upsertBoardItemByEmail({ email: emailField.value, item });
-	return MessageCard('Contact saved successfully!');
+	return Notify({ message: 'Contact saved successfully!' });
 }
 
 function handleItemUpdateClick(e) {
@@ -242,7 +243,10 @@ function handleItemUpdateClick(e) {
 		const msg = sanitizeUpdateMsg({ updateText, threadLink, emailBody, selectEmailContent });
 		if (!msg) return;
 		createItemUpdate({ itemId, updateText: msg });
-		return MessageCard('Item Update created successfully!');
+		// Notify({ message: 'Item Update created successfully!' });
+		Utilities.sleep(3000);
+		const { itemName = '', email = '' } = getCurrentBoardAndItem();
+		return initGmailHomeUI({ itemName, email });
 	} catch (err) {
 		console.log('ItemUpdateErr:', err);
 	}

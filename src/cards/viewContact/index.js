@@ -52,8 +52,8 @@ function buildCard({ selectCols, orderedFields, boardUsers }) {
 	const updateContactAction = CardService.newAction().setFunctionName('handleUpdateContact').setParameters({});
 
 	const btnUpdateContact = CardService.newTextButton()
-		.setText('Update Contact')
-		.setTextButtonStyle(CardService.TextButtonStyle.TEXT)
+		.setText('Submit')
+		.setTextButtonStyle(CardService.TextButtonStyle.FILLED)
 		.setOnClickAction(updateContactAction);
 
 	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);

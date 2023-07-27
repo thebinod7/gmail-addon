@@ -22,8 +22,10 @@ export default function saveContactCard({ email, itemName, allowedFields, boardU
 		.setOnClickAction(CardService.newAction().setFunctionName('handleLogoutClick'));
 
 	const formAction = CardService.newAction().setFunctionName('handleSaveContact');
-	const btnSubmit = CardService.newTextButton().setText('Submit').setOnClickAction(formAction);
-
+	const btnSubmit = CardService.newTextButton()
+		.setText('Submit')
+		.setOnClickAction(formAction)
+		.setTextButtonStyle(CardService.TextButtonStyle.FILLED);
 	const card = CardService.newCardBuilder().addSection(section.addWidget(btnSubmit).addWidget(btnLogout)).build();
 
 	return card;
