@@ -7,11 +7,11 @@ export default function SelectInput(input, currentSelectInput) {
 		const opts = JSON.parse(currentSelectInput.settings_str);
 		const keys = Object.keys(opts.labels);
 		const values = Object.values(opts.labels);
-		if (keys.length) {
-			for (let k of keys) {
+		if (keys.length && values.length) {
+			for (let i = 0; i < keys.length; i++) {
 				let opt = {
-					id: keys[k],
-					label: values[k]
+					id: keys[i],
+					label: values[i]
 				};
 				options.push(opt);
 			}

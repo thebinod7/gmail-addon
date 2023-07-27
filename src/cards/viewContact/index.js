@@ -36,7 +36,7 @@ function getEmailAndItemName(fields) {
 }
 
 function buildCard({ selectCols, orderedFields, boardUsers }) {
-	console.log('Ordered=====>', orderedFields);
+	console.log('OrderedFields=====>', orderedFields);
 	let widgets;
 	const { itemName, email } = getEmailAndItemName(orderedFields);
 

@@ -337,7 +337,6 @@ export const sanitizeUpdateMsg = ({ threadLink, updateText, emailBody, selectEma
 	if (selectEmailContent) {
 		const cleanText = emailBody.replace(/\s+/g, ' ');
 		const sanitizedContent = concatenateDots(cleanText.trim(), INBOX_CONTENT_LEN);
-		console.log('SNA==>', sanitizedContent);
 		msg = `MESSAGE: ${
 			updateText || 'No custom message!'
 		} <br/> LINK: ${threadLink} <br/> INBOX: <br/> ${sanitizedContent} `;
