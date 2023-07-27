@@ -48,7 +48,8 @@ import {
 	saveItemId,
 	getItemId,
 	saveScrapedEmailData,
-	getScrapedEmailData
+	getScrapedEmailData,
+	saveCurrentAccount
 } from './utils/localStorage';
 import Notify from './cards/widgets/Notify';
 
@@ -112,48 +113,54 @@ function fetchGmailSenderAndEmail(e) {
 }
 
 function initGmailHomeUI({ email, itemName }) {
-	const accessToken = getToken();
-	if (!accessToken) return AuthCard();
+	try {
+		const accessToken = getToken();
+		if (!accessToken) return AuthCard();
 
-	const account = fetchMondayAccountDetails();
-	const accountId = account.account_id.toString();
-	const settings = fetchGmailSettings(accountId); // For allowed fields display
-	if (!settings || !settings.data) return MessageCard('No settings found!');
-	const { allowedFields, board, group } = settings.data;
+		const account = fetchMondayAccountDetails();
+		const { me } = account.data;
+		saveCurrentAccount(me);
+		const accountId = account.account_id.toString();
+		const settings = fetchGmailSettings(accountId); // For allowed fields display
+		if (!settings || !settings.data) return MessageCard('No settings found!');
+		const { allowedFields, board, group } = settings.data;
 
-	const boardId = board.value;
-	saveAllowedFIelds(allowedFields);
-	const { data: settingsStrRes } = fetchBoardSettingsStr(boardId);
-	const { data: boardUserData } = fetchUsersByBoard(boardId);
-	const strColumns = settingsStrRes.boards[0].columns;
-	saveColumStrSettings(strColumns);
-	const boardUsers = boardUserData.boards[0].subscribers;
+		const boardId = board.value;
+		saveAllowedFIelds(allowedFields);
+		const { data: settingsStrRes } = fetchBoardSettingsStr(boardId);
+		const { data: boardUserData } = fetchUsersByBoard(boardId);
+		const strColumns = settingsStrRes.boards[0].columns;
+		saveColumStrSettings(strColumns);
+		const boardUsers = boardUserData.boards[0].subscribers;
 
-	saveCurrentBoardAndItem({ email, group: group || 'topics', itemName, boardId });
-	// Search in database
-	const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
-	if (dbResponse && dbResponse.data) {
-		const { id } = dbResponse.data.item;
-		saveItemId(id);
-		return ViewContactCard({
-			dbResponse: dbResponse.data,
-			strColumns,
-			boardUsers
-		});
-	}
-	const boardIds = [boardId];
-	const boardResponse = fetchBoardColumnValues(boardIds); // To search email inside Monday board
-	const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
-	for (let i = 0; i < rows.length; i++) {
-		let found = findEmailInBoardRow(rows[i], email);
-		if (found) {
-			const row = rows[i];
-			saveItemId(row.id);
-			return ViewContactCard({ dbResponse: null, boardItem: row, strColumns, boardUsers });
+		saveCurrentBoardAndItem({ email, group: group || 'topics', itemName, boardId });
+		// Search in database
+		const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
+		if (dbResponse && dbResponse.data) {
+			const { id } = dbResponse.data.item;
+			saveItemId(id);
+			return ViewContactCard({
+				dbResponse: dbResponse.data,
+				strColumns,
+				boardUsers
+			});
 		}
-	}
+		const boardIds = [boardId];
+		const boardResponse = fetchBoardColumnValues(boardIds); // To search email inside Monday board
+		const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
+		for (let i = 0; i < rows.length; i++) {
+			let found = findEmailInBoardRow(rows[i], email);
+			if (found) {
+				const row = rows[i];
+				saveItemId(row.id);
+				return ViewContactCard({ dbResponse: null, boardItem: row, strColumns, boardUsers });
+			}
+		}
 
-	return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
+		return SaveContactCard({ allowedFields, strColumns, email, itemName, boardUsers });
+	} catch (err) {
+		console.log('initHomeUIErr', err);
+	}
 }
 
 function onGmailMessageOpen(e) {
@@ -270,12 +277,6 @@ function handleContactTabClick() {
 	return initGmailHomeUI({ itemName, email });
 }
 
-function handleViewItemClick() {
-	const itemId = getItemId();
-	const { boardId } = getCurrentBoardAndItem();
-	console.log({ boardId });
-}
-
 global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
@@ -287,4 +288,3 @@ global.handleUpdateContact = handleUpdateContact;
 global.handleUpdateTabClick = handleUpdateTabClick;
 global.handleContactTabClick = handleContactTabClick;
 global.handleItemUpdateClick = handleItemUpdateClick;
-global.handleViewItemClick = handleViewItemClick;

@@ -47,6 +47,7 @@ function buildCard({ selectCols, orderedFields, boardUsers }) {
 	let cardSection = CardService.newCardSection();
 
 	const CardFooter = CardService.newFixedFooter().setPrimaryButton(CardFooterBtn);
+
 	const sectionTabsList = CardService.newButtonSet().addButton(BtnContactTab).addButton(BtnUpdatesTab);
 
 	const updateContactAction = CardService.newAction().setFunctionName('handleUpdateContact').setParameters({});

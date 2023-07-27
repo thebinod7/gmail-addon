@@ -1,7 +1,11 @@
+import { getItemId, getCurrentBoardAndItem, getCurrentAccount } from '../../utils/localStorage';
+
 export default function CardFooter() {
-	let cardFooterAction = CardService.newAction().setFunctionName('handleViewItemClick').setParameters({});
+	const itemId = getItemId();
+	const { boardId } = getCurrentBoardAndItem();
+	const d = getCurrentAccount();
+	const accountSlug = d && d.account ? d.account.slug : '404';
+	const url = `https://${accountSlug}.monday.com/boards/${boardId}/pulses/${itemId}`;
 
-	const cardFooterBtn = CardService.newTextButton().setText('View Item').setOnClickAction(cardFooterAction);
-
-	return cardFooterBtn;
+	return CardService.newTextButton().setText('View Item').setOpenLink(CardService.newOpenLink().setUrl(url));
 }

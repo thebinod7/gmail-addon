@@ -26,7 +26,8 @@
 			"openLinkUrlPrefixes": [
 				"https://mail.google.com/",
 				"https://auth.monday.com/oauth2/authorize",
-				"https://api.monday.com/v2"
+				"https://api.monday.com/v2",
+				"https://*.monday.com/"
 			],
 			"universalActions": [
 				{

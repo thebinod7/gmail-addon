@@ -34,6 +34,18 @@ export const getScrapedEmailData = () => {
 	return JSON.parse(data);
 };
 
+export const saveCurrentAccount = data => {
+	const properties = PropertiesService.getUserProperties();
+	properties.setProperty('currentAccount', JSON.stringify(data));
+};
+
+export const getCurrentAccount = () => {
+	const properties = PropertiesService.getUserProperties();
+	const data = properties.getProperty('currentAccount');
+	if (!data) return null;
+	return JSON.parse(data);
+};
+
 export const saveCurrentBoardAndItem = data => {
 	const properties = PropertiesService.getUserProperties();
 	properties.setProperty('currentBoardAndItem', JSON.stringify(data));
