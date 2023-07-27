@@ -25,11 +25,12 @@ export const addValuesAndSettingsStr = (allowedFields, settingsStrAddedInputs) =
 	for (let f of allowedFields) {
 		const found = settingsStrAddedInputs.find(v => v.columnId === f.id);
 		if (found) {
-			const { value, settings_str, columnId, columType } = found;
-			let newData = { ...f, value, settings_str, columType, columnId };
+			const { value, settings_str = '', columnId, columnType } = found;
+			let newData = { ...f, value, settings_str, columnType, columnId };
 			result.push(newData);
 		}
 	}
+	console.log('TOTAL=>', result.length);
 	return result;
 };
 
@@ -173,13 +174,15 @@ export const extractObjectKeysAndValues = obj => {
 	return { keys, values };
 };
 
-export const sanitizInputPayload = ({ keys, values }) => {
+export const sanitizeColumnTypeByID = ({ keys, values }) => {
 	let result = [];
 	for (let i = 0; i < keys.length; i++) {
+		const id = keys[i];
+		const val = values[i];
 		let d = {
-			columnType: getColumTypeByID(keys[i]),
-			columnId: keys[i],
-			value: values[i]
+			columnType: getColumTypeByID(id),
+			columnId: id,
+			value: val
 		};
 		result.push(d);
 	}
@@ -208,10 +211,13 @@ const getColumTypeByID = id => {
 	const hasPerson = id.includes('person');
 	if (hasPerson) return PERSON;
 
-	const hasColor = id.includes('status');
+	const hasColor = id.includes(COLOR);
 	if (hasColor) return COLOR;
 
-	const hasNumber = id.includes('numeric');
+	const hasStatus = id.includes('status');
+	if (hasStatus) return COLOR;
+
+	const hasNumber = id.includes(NUMBERS);
 	if (hasNumber) return NUMBERS;
 
 	const hasFiles = id.includes(FILES);
@@ -246,7 +252,7 @@ function convertMSToNormalDate(msSinceEpoch) {
 }
 
 //Further sanitize Date, Color,Dropdwon values
-export const sanitizePayloadValue = payload => {
+export const sanitizeSpecialFieldsValue = payload => {
 	let result = [];
 	if (!payload.length) return result;
 	for (let p of payload) {
@@ -294,6 +300,7 @@ export const getDefaultValueByColumnType = columnsWithValue => {
 };
 
 export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload }) => {
+	console.log('Payload==>', boardPayload);
 	let columnValues = `\\"name\\": \\"${itemName}\\"`;
 	for (let t of boardPayload) {
 		if (t.columnType === TEXT) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;

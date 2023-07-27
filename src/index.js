@@ -30,9 +30,9 @@ import {
 	findEmailInBoardRow,
 	extractCharactersBeforeSymbol,
 	extractObjectKeysAndValues,
-	sanitizInputPayload,
+	sanitizeColumnTypeByID,
 	createBoardQuery,
-	sanitizePayloadValue,
+	sanitizeSpecialFieldsValue,
 	addSetingsStrToPayload,
 	addValuesAndSettingsStr,
 	sanitizeUpdateMsg
@@ -103,7 +103,9 @@ function fetchGmailSenderAndEmail(e) {
 		email = emailAddr;
 		emailBody = messages[i].getPlainBody();
 	}
-	const data = { email, itemName, emailBody, threadLink };
+	let scapeDoubleQoutes = itemName.replace(/"/g, '');
+	const data = { email, itemName: scapeDoubleQoutes, emailBody, threadLink };
+
 	saveScrapedEmailData(data);
 	return data;
 }
@@ -162,39 +164,60 @@ function handleLoginClick(e) {
 	return AuthorizationCard();
 }
 
+// Create payload(columnId,columnType,value) with formData
+// Create boardItem and sanitize special fields value
+// Update extra board columns
+// Upsert boardItem with email and payload(with value and settings_str)
 function handleUpdateContact(e) {
-	const { keys, values } = extractObjectKeysAndValues(e.formInput);
-	const sanitizedData = sanitizInputPayload({ keys, values });
-	const currentItem = getCurrentBoardAndItem();
-	const allowedFields = getAllowedFields();
-	if (!currentItem) return;
-	const { itemName, boardId } = currentItem;
-	const itemId = getItemId();
-	const valueSanitized = sanitizePayloadValue(sanitizedData);
-	const nameField = valueSanitized.find(f => f.columnType === NAME);
-	const boardQuery = createBoardQuery({ itemName: nameField.value, itemId, boardId, boardPayload: valueSanitized });
-	const updatedExtras = updateExtraColumns(boardQuery);
-	console.log('UPDATED==>', updatedExtras);
-	const strColumns = getColumStrSettings();
-	const settingsStrAddedInputs = addSetingsStrToPayload(strColumns, valueSanitized);
-	const boarItemColValues = addValuesAndSettingsStr(allowedFields, settingsStrAddedInputs);
-	const item = { id: itemId, name: itemName, column_values: boarItemColValues };
-	const emailField = valueSanitized.find(v => v.columnType === EMAIL);
-	upsertBoardItemByEmail({ email: emailField.value, item });
-	return MessageCard('Contact updated successfully!');
+	try {
+		const { keys, values } = extractObjectKeysAndValues(e.formInput);
+		const sanitizedData = sanitizeColumnTypeByID({ keys, values });
+		const currentItem = getCurrentBoardAndItem();
+		const allowedFields = getAllowedFields();
+		if (!currentItem) return;
+		const { itemName, boardId } = currentItem;
+		const itemId = getItemId();
+		const valueSanitized = sanitizeSpecialFieldsValue(sanitizedData);
+		console.log('VS==>', valueSanitized);
+		const nameField = valueSanitized.find(f => f.columnType === NAME);
+		const boardQuery = createBoardQuery({
+			itemName: nameField.value,
+			itemId,
+			boardId,
+			boardPayload: valueSanitized
+		});
+		const updatedExtras = updateExtraColumns(boardQuery);
+		console.log('UPDATED==>', updatedExtras);
+		const strColumns = getColumStrSettings();
+		const settingsStrAddedInputs = addSetingsStrToPayload(strColumns, valueSanitized);
+		const boarItemColValues = addValuesAndSettingsStr(allowedFields, settingsStrAddedInputs);
+		console.log('boarItemColValues', boarItemColValues);
+		const item = { id: itemId, name: itemName, column_values: boarItemColValues };
+		const emailField = valueSanitized.find(v => v.columnType === EMAIL);
+		console.log('EM==>', emailField);
+		const upserted = upsertBoardItemByEmail({ email: emailField.value, item });
+		console.log('Upserted=>', upserted);
+		return MessageCard('Contact updated successfully!');
+	} catch (err) {
+		console.log('UpdateContactErr:', err);
+	}
 }
 
+// Create payload(columnId,columnType,value) with formData
+// Create boardItem and sanitize special fields value
+// Update extra board columns
+// Upsert boardItem with email and payload(with value and settings_str)
 function handleSaveContact(e) {
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
-	const sanitizedData = sanitizInputPayload({ keys, values }); // columnId,columnTyp,value
+	const sanitizedData = sanitizeColumnTypeByID({ keys, values }); // columnId,columnTyp,value
 	const currentItem = getCurrentBoardAndItem();
 	const allowedFields = getAllowedFields();
 	if (!currentItem) return;
 	const { itemName, boardId, group } = currentItem;
 	const res = createBoardItem({ boardId, group, itemName });
-	if (res.error_message) return;
+	if (res.error_message || res.errors) return console.log('error=>', res);
 	const { id: itemId } = res.data.create_item;
-	const valueSanitized = sanitizePayloadValue(sanitizedData);
+	const valueSanitized = sanitizeSpecialFieldsValue(sanitizedData);
 	console.log('Save Contact Payload=>', valueSanitized);
 	const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });
 	const updatedExtras = updateExtraColumns(boardQuery);

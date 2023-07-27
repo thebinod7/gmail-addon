@@ -60,9 +60,7 @@ function buildCard({ selectCols, orderedFields, boardUsers }) {
 
 	cardSection.addWidget(sectionTabsList);
 
-	const OmittedEmailFields = orderedFields.filter(f => f.type !== BOARD_COLUMNS.EMAIL);
-
-	for (let f of OmittedEmailFields) {
+	for (let f of orderedFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
 		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
 		if (_input) widgets = cardSection.addWidget(_input);
