@@ -44,6 +44,7 @@ function buildCard({ selectCols, orderedFields, boardUsers }) {
 	const { BtnContactTab, BtnUpdatesTab } = createTabs({ activeTab: MENU_TABS.CONTACT });
 
 	let cardSection = CardService.newCardSection();
+	const CardDivider = CardService.newDivider();
 
 	const CardFooter = CardService.newFixedFooter().setPrimaryButton(CardFooterBtn);
 
@@ -58,7 +59,7 @@ function buildCard({ selectCols, orderedFields, boardUsers }) {
 
 	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);
 
-	cardSection.addWidget(sectionTabsList);
+	cardSection.addWidget(CardHeader).addWidget(CardDivider).addWidget(sectionTabsList);
 
 	for (let f of orderedFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
@@ -67,7 +68,7 @@ function buildCard({ selectCols, orderedFields, boardUsers }) {
 	}
 
 	const card = CardService.newCardBuilder()
-		.setHeader(CardHeader)
+		// .setHeader(CardHeader)
 		.setFixedFooter(CardFooter)
 		.addSection(cardSection.addWidget(cardSectionUpdateBtn))
 		.build();

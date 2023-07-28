@@ -10,7 +10,8 @@ import {
 	SaveContactCard,
 	MessageCard,
 	AuthorizationCard,
-	ViewContactCard
+	ViewContactCard,
+	SettingsCard
 } from './cards';
 import {
 	fetchMondayAccessToken,
@@ -277,6 +278,10 @@ function handleContactTabClick() {
 	return initGmailHomeUI({ itemName, email });
 }
 
+function handleSettingIconClick() {
+	return SettingsCard();
+}
+
 global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
@@ -288,3 +293,4 @@ global.handleUpdateContact = handleUpdateContact;
 global.handleUpdateTabClick = handleUpdateTabClick;
 global.handleContactTabClick = handleContactTabClick;
 global.handleItemUpdateClick = handleItemUpdateClick;
+global.handleSettingIconClick = handleSettingIconClick;

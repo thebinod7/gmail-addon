@@ -6,3 +6,4 @@ export { default as MessageCard } from './messageBox';
 export { default as AuthorizationCard } from './authorization';
 export { default as ItemUpdatesCard } from './itemUpdates';
 export { default as ViewContactCard } from './viewContact';
+export { default as SettingsCard } from './settings';

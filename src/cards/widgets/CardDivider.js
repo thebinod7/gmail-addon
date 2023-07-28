@@ -1,3 +1,3 @@
-export default function CardDivider(text = 'No text provided!') {
+export default function CardDivider() {
 	return CardService.newDivider();
 }

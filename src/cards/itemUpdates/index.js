@@ -43,6 +43,8 @@ function buildCard({ itemName, email, itemUpdatesList }) {
 	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);
 
 	const cardSection = CardService.newCardSection()
+		.addWidget(CardHeader)
+		.addWidget(cardDivider)
 		.addWidget(sectionTabsList)
 		.addWidget(UpdateInputBox)
 		.addWidget(MyCheckbox)
@@ -64,7 +66,7 @@ function buildCard({ itemName, email, itemUpdatesList }) {
 	}
 
 	const card = CardService.newCardBuilder()
-		.setHeader(CardHeader)
+		// .setHeader(CardHeader)
 		.setFixedFooter(CardFooter)
 		.addSection(cardSection)
 		.build();
