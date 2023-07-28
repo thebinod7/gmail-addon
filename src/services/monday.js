@@ -4,10 +4,30 @@ const MONDAY_CLIENT_ID = process.env.APP_CLIENT_ID;
 const MONDAY_CLIENT_SECRET = process.env.CLIENT_SECRET;
 const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
 const MONDAY_API_ENDPOINT = process.env.MONDAY_API_ENDPOINT;
+
 const BOARD_ITEMS_LIMIT = 10;
+const BOARD_LIMIT = 20;
 
 export const updateExtraColumns = query => {
 	const accessToken = getToken();
+	const headers = {
+		Authorization: accessToken,
+		'Content-Type': 'application/json'
+	};
+	const options = {
+		method: 'post',
+		contentType: 'application/json',
+		muteHttpExceptions: true,
+		headers: headers,
+		payload: JSON.stringify({ query: query })
+	};
+	const res = UrlFetchApp.fetch(MONDAY_API_ENDPOINT, options);
+	return JSON.parse(res);
+};
+
+export const fetchBoardItems = () => {
+	const accessToken = getToken();
+	const query = `{ boards (limit:${BOARD_LIMIT}, order_by:used_at) { id name groups{id title} type subscribers{name,id} workspace{id,name} columns{id, type, title, settings_str} items(limit:10){parent_item{id} } }}`;
 	const headers = {
 		Authorization: accessToken,
 		'Content-Type': 'application/json'

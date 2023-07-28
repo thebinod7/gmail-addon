@@ -187,7 +187,6 @@ function handleUpdateContact(e) {
 		const { itemName, boardId } = currentItem;
 		const itemId = getItemId();
 		const valueSanitized = sanitizeSpecialFieldsValue(sanitizedData);
-		console.log('VS==>', valueSanitized);
 		const nameField = valueSanitized.find(f => f.columnType === NAME);
 		const boardQuery = createBoardQuery({
 			itemName: nameField.value,
@@ -195,17 +194,13 @@ function handleUpdateContact(e) {
 			boardId,
 			boardPayload: valueSanitized
 		});
-		const updatedExtras = updateExtraColumns(boardQuery);
-		console.log('UPDATED==>', updatedExtras);
+		updateExtraColumns(boardQuery);
 		const strColumns = getColumStrSettings();
 		const settingsStrAddedInputs = addSetingsStrToPayload(strColumns, valueSanitized);
 		const boarItemColValues = addValuesAndSettingsStr(allowedFields, settingsStrAddedInputs);
-		console.log('boarItemColValues', boarItemColValues);
 		const item = { id: itemId, name: itemName, column_values: boarItemColValues };
 		const emailField = valueSanitized.find(v => v.columnType === EMAIL);
-		console.log('EM==>', emailField);
-		const upserted = upsertBoardItemByEmail({ email: emailField.value, item });
-		console.log('Upserted=>', upserted);
+		upsertBoardItemByEmail({ email: emailField.value, item });
 		return Notify({ message: 'Contact updated successfully!' });
 	} catch (err) {
 		console.log('UpdateContactErr:', err);

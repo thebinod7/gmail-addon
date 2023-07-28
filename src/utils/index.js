@@ -18,7 +18,71 @@ const {
 	LONG_TEXT,
 	RATING
 } = BOARD_COLUMNS;
+
 const INBOX_CONTENT_LEN = 1000;
+
+// ===================Utility Methods============================
+
+export const mapBoardColumnsAndSelectOptions = data => {
+	if (!data.length) return { mappedColumns: [], boardOptions: [] };
+	const mappedColumns = data.map(d => {
+		return {
+			boardId: d.id,
+			columns: d.columns
+		};
+	});
+	const boardOptions = data.map(d => {
+		return { label: d.name, value: d.id };
+	});
+	return { mappedColumns, boardOptions };
+};
+
+const checkParentItems = items => {
+	let hasParent = false;
+	for (let i of items) {
+		if (i.parent_item) {
+			hasParent = true;
+			return hasParent;
+		}
+	}
+	return hasParent;
+};
+
+export const filterSubitemBoards = boards => {
+	let result = [];
+	if (!boards || boards.length < 1) return result;
+	for (let b of boards) {
+		const hasParent = checkParentItems(b.items);
+		if (!hasParent) result.push(b);
+	}
+	return result;
+};
+
+export const mapGroupsByBoard = boards => {
+	let groups = [];
+	if (!boards.length) return groups;
+	for (let b of boards) {
+		let d = {
+			boardId: b.id,
+			groupId: b.groups[0].id
+		};
+		groups.push(d);
+	}
+	return groups;
+};
+
+export const filterBoardByUser = (userId, boardData) => {
+	const result = [];
+	const { boards } = boardData;
+	if (boards.length) {
+		for (let b of boards) {
+			const userExist = b.subscribers.find(f => f.id === userId);
+			if (userExist) result.push(b);
+		}
+		const filteredBoards = result.filter(f => f.type === 'board');
+		return { boards: filteredBoards };
+	} else return { boards: [] };
+};
 
 export const addValuesAndSettingsStr = (allowedFields, settingsStrAddedInputs) => {
 	let result = [];

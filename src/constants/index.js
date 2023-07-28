@@ -16,6 +16,7 @@ const BOARD_COLUMNS_MAPPING = {
 	LOOKUP: 'lookup'
 };
 module.exports = {
+	SELECT_NULL: 'No item selected',
 	MENU_TABS: {
 		CONTACT: 'Contact',
 		UPDATES: 'Updates'
