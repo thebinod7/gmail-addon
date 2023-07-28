@@ -277,6 +277,12 @@ function handleSettingIconClick() {
 	return SettingsCard();
 }
 
+function handleMondayBoardChange(e) {
+	const obj = e.commonEventObject;
+	console.log('E==>', e);
+	console.log('OBJECT==>', obj.formInputs.selectedMondayBoard.stringInputs);
+}
+
 global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
@@ -289,3 +295,4 @@ global.handleUpdateTabClick = handleUpdateTabClick;
 global.handleContactTabClick = handleContactTabClick;
 global.handleItemUpdateClick = handleItemUpdateClick;
 global.handleSettingIconClick = handleSettingIconClick;
+global.handleMondayBoardChange = handleMondayBoardChange;

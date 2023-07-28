@@ -31,9 +31,14 @@ function newSettingsCard({ boardOptions }) {
 
 	let cardDivider = CardService.newDivider();
 
+	const dropdownAction = CardService.newAction()
+		.setFunctionName('handleMondayBoardChange')
+		.setParameters({ msg: 'Hello' });
+
 	let selectInput = CardService.newSelectionInput()
-		.setFieldName('selectBoard')
+		.setFieldName('selectedMondayBoard')
 		.setTitle('Monday Boards')
+		.setOnChangeAction(dropdownAction)
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.addItem('--Select--', SELECT_NULL, true);
 
