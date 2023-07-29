@@ -179,8 +179,9 @@ function handleLoginClick(e) {
 // Upsert boardItem with email and payload(with value and settings_str)
 function handleUpdateContact(e) {
 	try {
+		const { formInputs } = e.commonEventObject;
 		const { keys, values } = extractObjectKeysAndValues(e.formInput);
-		const sanitizedData = sanitizeColumnTypeByID({ keys, values });
+		const sanitizedData = sanitizeColumnTypeByID({ keys, values, formInputs });
 		const currentItem = getCurrentBoardAndItem();
 		const allowedFields = getAllowedFields();
 		if (!currentItem) return;

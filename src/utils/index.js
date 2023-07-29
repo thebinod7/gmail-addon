@@ -179,7 +179,7 @@ export const checkAndAppendSettingsStr = (boardColumns, strColumns) => {
 	return finalResult;
 };
 
-export const createFormInputByType = ({ input, boardUsers, currentSelectInput }) => {
+export const createFormInputByType = ({ input, boardUsers, currentSelectInput, currentDropdowCols }) => {
 	switch (input.type) {
 		case NAME: {
 			return TextInput(input);
@@ -188,7 +188,7 @@ export const createFormInputByType = ({ input, boardUsers, currentSelectInput })
 			return TextInput(input);
 		}
 		case DROPDOWN: {
-			return DropdownInput(input);
+			return DropdownInput(input, currentDropdowCols);
 		}
 		case EMAIL: {
 			return EmailInput(input);
@@ -256,6 +256,7 @@ export const sanitizeColumnTypeByID = ({ keys, values, formInputs }) => {
 		let val = values[i];
 		const colType = getColumTypeByID(id);
 		if (colType === DROPDOWN) {
+			console.log('AAA=>', formInputs[id].stringInputs);
 			val = formInputs[id].stringInputs?.value || [];
 		}
 		let d = {

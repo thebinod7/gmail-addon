@@ -5,14 +5,16 @@ import createTabs from '../widgets/Tabs';
 import { fieldOrderRealign, createFormInputByType, getDefaultValueByColumnType } from '../../utils';
 import { BOARD_COLUMNS, MENU_TABS } from '../../constants';
 
+const { NAME, EMAIL, COLOR, DROPDOWN } = BOARD_COLUMNS;
+
 export default function ViewContactCard({ boardItem = null, dbResponse, strColumns, boardUsers }) {
 	let displayFields;
 
 	if (boardItem) {
 		let valueAdded = getDefaultValueByColumnType(boardItem.column_values);
 		const nameField = {
-			id: BOARD_COLUMNS.NAME,
-			type: BOARD_COLUMNS.NAME,
+			id: NAME,
+			type: NAME,
 			title: 'Item Name',
 			value: boardItem.name
 		};
@@ -22,20 +24,24 @@ export default function ViewContactCard({ boardItem = null, dbResponse, strColum
 		displayFields = item.column_values;
 	}
 
-	const selectCols = strColumns.filter(f => f.type === 'color');
+	console.log('DP==>', displayFields);
+
+	const selectCols = strColumns.filter(f => f.type === COLOR);
+	const dropdownCols = strColumns.filter(f => f.type === DROPDOWN);
+
 	const orderedFields = fieldOrderRealign(displayFields);
-	return buildCard({ selectCols, orderedFields, boardUsers });
+	return buildCard({ selectCols, dropdownCols, orderedFields, boardUsers });
 }
 
 function getEmailAndItemName(fields) {
-	const nameField = fields.find(f => f.type === BOARD_COLUMNS.NAME);
-	const emailFields = fields.filter(f => f.type === BOARD_COLUMNS.EMAIL);
+	const nameField = fields.find(f => f.type === NAME);
+	const emailFields = fields.filter(f => f.type === EMAIL);
 	const itemName = nameField?.value || '';
 	const email = emailFields.length ? emailFields[0].value : '';
 	return { itemName, email };
 }
 
-function buildCard({ selectCols, orderedFields, boardUsers }) {
+function buildCard({ selectCols, dropdownCols, orderedFields, boardUsers }) {
 	let widgets;
 	const { itemName, email } = getEmailAndItemName(orderedFields);
 
@@ -63,7 +69,8 @@ function buildCard({ selectCols, orderedFields, boardUsers }) {
 
 	for (let f of orderedFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
-		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
+		const currentDropdowCols = dropdownCols.find(d => d.id === f.id);
+		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput, currentDropdowCols });
 		if (_input) widgets = cardSection.addWidget(_input);
 	}
 
