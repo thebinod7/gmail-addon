@@ -39,7 +39,9 @@ function renderDropdown({ input, dropdownOptions }) {
 	const foundValues = getSavedValuesFromOptions({ savedValues, dropdownOptions });
 	for (let d of dropdownOptions) {
 		const value = d.value.toString();
-		const selected = foundValues.includes(value);
+		let selected = false;
+		if (input.value && input.value.length) selected = input.value.includes(value);
+		else selected = foundValues.includes(value);
 		checkboxGroup.addItem(d.label, value, selected);
 	}
 

@@ -24,7 +24,7 @@ export default function ViewContactCard({ boardItem = null, dbResponse, strColum
 		displayFields = item.column_values;
 	}
 
-	console.log('DP==>', displayFields);
+	console.log('DP==>', displayFields.length);
 
 	const selectCols = strColumns.filter(f => f.type === COLOR);
 	const dropdownCols = strColumns.filter(f => f.type === DROPDOWN);
@@ -66,6 +66,8 @@ function buildCard({ selectCols, dropdownCols, orderedFields, boardUsers }) {
 	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);
 
 	cardSection.addWidget(CardHeader).addWidget(CardDivider).addWidget(sectionTabsList);
+
+	console.log('OR_FIELDS=>', orderedFields);
 
 	for (let f of orderedFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);

@@ -101,6 +101,9 @@ export const addValuesAndSettingsStr = (allowedFields, settingsStrAddedInputs) =
 			const { value, settings_str = '', columnId, columnType } = found;
 			let newData = { ...f, value, settings_str, columnType, columnId };
 			result.push(newData);
+		} else {
+			const newData = { ...f, columnId: f.id, columnType: f.type, value: '' };
+			result.push(newData);
 		}
 	}
 	return result;
