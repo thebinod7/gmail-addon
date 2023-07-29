@@ -1,5 +1,14 @@
 import { BOARD_COLUMNS } from '../constants';
-import { DateInput, EmailInput, PersonInput, LinkInput, PhoneInput, SelectInput, TextInput } from '../formInputs';
+import {
+	DateInput,
+	EmailInput,
+	PersonInput,
+	LinkInput,
+	PhoneInput,
+	SelectInput,
+	TextInput,
+	DropdownInput
+} from '../formInputs';
 
 const {
 	NAME,
@@ -94,7 +103,6 @@ export const addValuesAndSettingsStr = (allowedFields, settingsStrAddedInputs) =
 			result.push(newData);
 		}
 	}
-	console.log('TOTAL=>', result.length);
 	return result;
 };
 
@@ -179,6 +187,9 @@ export const createFormInputByType = ({ input, boardUsers, currentSelectInput })
 		case TEXT: {
 			return TextInput(input);
 		}
+		case DROPDOWN: {
+			return DropdownInput(input);
+		}
 		case EMAIL: {
 			return EmailInput(input);
 		}
@@ -238,11 +249,15 @@ export const extractObjectKeysAndValues = obj => {
 	return { keys, values };
 };
 
-export const sanitizeColumnTypeByID = ({ keys, values }) => {
+export const sanitizeColumnTypeByID = ({ keys, values, formInputs }) => {
 	let result = [];
 	for (let i = 0; i < keys.length; i++) {
 		const id = keys[i];
-		const val = values[i];
+		let val = values[i];
+		const colType = getColumTypeByID(id);
+		if (colType === DROPDOWN) {
+			val = formInputs[id].stringInputs?.value || [];
+		}
 		let d = {
 			columnType: getColumTypeByID(id),
 			columnId: id,
@@ -259,6 +274,9 @@ const getColumTypeByID = id => {
 
 	const hasText = id.includes(TEXT);
 	if (hasText) return TEXT;
+
+	const hasDropdown = id.includes(DROPDOWN);
+	if (hasDropdown) return DROPDOWN;
 
 	const hasEmail = id.includes(EMAIL);
 	if (hasEmail) return EMAIL;
@@ -301,8 +319,6 @@ const createPersonPayload = users => {
 	}
 	return usersList;
 };
-
-const createDropdownPayload = () => {};
 
 function convertMSToNormalDate(msSinceEpoch) {
 	const date = new Date(msSinceEpoch);
@@ -363,8 +379,18 @@ export const getDefaultValueByColumnType = columnsWithValue => {
 	return result;
 };
 
+const sanitizeDropdownValues = values => {
+	let result = [];
+	if (!values.length) return [];
+	for (let v of values) {
+		// const value = `\\"${v.toString()}\\"`;
+		const d = parseInt(v);
+		result.push(d);
+	}
+	return result;
+};
+
 export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload }) => {
-	console.log('Payload==>', boardPayload);
 	let columnValues = `\\"name\\": \\"${itemName}\\"`;
 	for (let t of boardPayload) {
 		if (t.columnType === TEXT) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
@@ -381,8 +407,8 @@ export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload 
 		if (t.columnType === RATING) columnValues += `,\\"${t.columnId}\\": {\\"rating\\" : ${t.value || 0}}`;
 		if (t.columnType === COLOR) columnValues += `,\\"${t.columnId}\\": \\"${t.value || []}\\"`;
 		if (t.columnType === DROPDOWN) {
-			const data = createDropdownPayload(t.value || []);
-			columnValues += `,\\"${t.columnId}\\":{\\"labels\\": [${data}]}`;
+			const data = sanitizeDropdownValues(t.value);
+			columnValues += `,\\"${t.columnId}\\":{\\"ids\\": [${data}]}`;
 		}
 		if (t.columnType === PERSON && t.value && t.value.length) {
 			let usersList = createPersonPayload(t.value);

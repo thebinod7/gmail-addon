@@ -212,8 +212,11 @@ function handleUpdateContact(e) {
 // Update extra board columns
 // Upsert boardItem with email and payload(with value and settings_str)
 function handleSaveContact(e) {
+	console.log('E==>', e);
+	const { formInputs } = e.commonEventObject;
 	const { keys, values } = extractObjectKeysAndValues(e.formInput);
-	const sanitizedData = sanitizeColumnTypeByID({ keys, values }); // columnId,columnTyp,value
+	const sanitizedData = sanitizeColumnTypeByID({ keys, values, formInputs }); // columnId,columnTyp,value
+	console.log('Sanitized==>', sanitizedData);
 	const currentItem = getCurrentBoardAndItem();
 	const allowedFields = getAllowedFields();
 	if (!currentItem) return;
@@ -234,7 +237,7 @@ function handleSaveContact(e) {
 	console.log('boarItemColValues===>', boarItemColValues);
 	const item = { id: itemId, name: itemName, column_values: boarItemColValues };
 	const emailField = valueSanitized.find(v => v.columnType === EMAIL);
-	upsertBoardItemByEmail({ email: emailField.value, item });
+	// upsertBoardItemByEmail({ email: emailField.value, item });
 	return Notify({ message: 'Contact saved successfully!' });
 }
 

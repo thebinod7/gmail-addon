@@ -2,6 +2,8 @@ import { fieldOrderRealign, createFormInputByType, appendEmailAndItemName } from
 
 export default function saveContactCard({ email, itemName, allowedFields, boardUsers, strColumns }) {
 	let widgets;
+	// console.log('ALlowed==>', allowedFields);
+	// console.log('STR_COLS==>', strColumns);
 
 	const selectCols = strColumns.filter(f => f.type === 'color');
 
