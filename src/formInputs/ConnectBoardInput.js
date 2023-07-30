@@ -1,6 +1,7 @@
 import { fetchBoardColumns } from '../services/monday';
 import { SELECT_NULL } from '../constants';
 
+// Move data fetching part in save contact?
 export default function ConnectBoardInput(input) {
 	console.log('Connect_Col==>', input);
 	const { settings_str } = input;
@@ -17,7 +18,7 @@ function renderUI({ input, boards }) {
 
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
-		.setTitle(title)
+		.setTitle('')
 		.setFieldName(id)
 		.addItem('--Select Board--', SELECT_NULL, true);
 

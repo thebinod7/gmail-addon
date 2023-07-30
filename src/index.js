@@ -11,7 +11,8 @@ import {
 	MessageCard,
 	AuthorizationCard,
 	ViewContactCard,
-	SettingsCard
+	SettingsCard,
+	AddBoardItemCard
 } from './cards';
 import {
 	fetchMondayAccessToken,
@@ -284,6 +285,10 @@ function handleMondayBoardChange(e) {
 	console.log('OBJECT==>', obj.formInputs.selectedMondayBoard.stringInputs);
 }
 
+function handleAddConnectItemClick() {
+	return AddBoardItemCard();
+}
+
 global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
@@ -297,3 +302,4 @@ global.handleContactTabClick = handleContactTabClick;
 global.handleItemUpdateClick = handleItemUpdateClick;
 global.handleSettingIconClick = handleSettingIconClick;
 global.handleMondayBoardChange = handleMondayBoardChange;
+global.handleAddConnectItemClick = handleAddConnectItemClick;

@@ -1,13 +1,10 @@
 import { fieldOrderRealign, createFormInputByType, appendEmailAndItemName } from '../../utils';
 import { BOARD_COLUMNS } from '../../constants';
+import DecoratedWithButton from '../widgets/DecoratedWithButton';
 
 const { COLOR, BOARD_RELATION } = BOARD_COLUMNS;
 
 export default function saveContactCard({ email, itemName, allowedFields, boardUsers, strColumns }) {
-	let widgets;
-	// console.log('ALlowed==>', allowedFields);
-	// console.log('STR_COLS==>', strColumns);
-
 	const selectCols = strColumns.filter(f => f.type === COLOR);
 	const connectCols = strColumns.filter(f => f.type === BOARD_RELATION);
 
@@ -24,7 +21,13 @@ export default function saveContactCard({ email, itemName, allowedFields, boardU
 		const currentConnectInput = selectCols.find(s => s.id === f.id);
 
 		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
-		if (_input) widgets = section.addWidget(_input);
+		if (_input) {
+			if (f.type === BOARD_RELATION) {
+				const divider = CardService.newDivider();
+				const dc = DecoratedWithButton();
+				section.addWidget(dc).addWidget(_input).addWidget(divider);
+			} else section.addWidget(_input);
+		}
 	}
 
 	const btnLogout = CardService.newTextButton()
