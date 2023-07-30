@@ -1,4 +1,13 @@
 ======================
 Input validations
 Settings page
-Support dropdown field
+
+# Connect column:
+- Get boardIDs from settings_str of connect_column of connected_board
+- Get board details by board IDs
+- Create select_options from board response and display inside SELECT_INPUT
+
+
+# Add board item:
+- Display all columns of connected_board
+- Create item using 
