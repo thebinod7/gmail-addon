@@ -10,3 +10,4 @@ export { default as SelectInput } from './SelectInput';
 export { default as FileInput } from './FileInput';
 export { default as PersonInput } from './PersonInput';
 export { default as DropdownInput } from './DropdownInput';
+export { default as ConnectBoardInput } from './ConnectBoardInput';

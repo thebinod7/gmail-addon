@@ -7,7 +7,8 @@ import {
 	PhoneInput,
 	SelectInput,
 	TextInput,
-	DropdownInput
+	DropdownInput,
+	ConnectBoardInput
 } from '../formInputs';
 
 const {
@@ -186,6 +187,10 @@ export const createFormInputByType = ({ input, boardUsers, currentSelectInput, c
 	switch (input.type) {
 		case NAME: {
 			return TextInput(input);
+		}
+
+		case BOARD_RELATION: {
+			return ConnectBoardInput(input);
 		}
 		case TEXT: {
 			return TextInput(input);

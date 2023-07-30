@@ -25,6 +25,24 @@ export const updateExtraColumns = query => {
 	return JSON.parse(res);
 };
 
+export const fetchBoardColumns = boardIds => {
+	const accessToken = getToken();
+	let query = `query { boards(ids:${boardIds}, limit:${BOARD_ITEMS_LIMIT}) {id name columns{id, type, title, settings_str} }}`;
+	const headers = {
+		Authorization: accessToken,
+		'Content-Type': 'application/json'
+	};
+	const options = {
+		method: 'post',
+		contentType: 'application/json',
+		muteHttpExceptions: true,
+		headers: headers,
+		payload: JSON.stringify({ query: query })
+	};
+	const res = UrlFetchApp.fetch(MONDAY_API_ENDPOINT, options);
+	return JSON.parse(res);
+};
+
 export const fetchBoardItems = () => {
 	const accessToken = getToken();
 	const query = `{ boards (limit:${BOARD_LIMIT}, order_by:used_at) { id name groups{id title} type subscribers{name,id} workspace{id,name} columns{id, type, title, settings_str} items(limit:10){parent_item{id} } }}`;
