@@ -175,10 +175,6 @@ function handleLoginClick(e) {
 	return AuthorizationCard();
 }
 
-// Create payload(columnId,columnType,value) with formData
-// Create boardItem and sanitize special fields value
-// Update extra board columns
-// Upsert boardItem with email and payload(with value and settings_str)
 function handleUpdateContact(e) {
 	try {
 		const allowedFields = getAllowedFields();
@@ -190,8 +186,10 @@ function handleUpdateContact(e) {
 		const { itemName, boardId } = currentItem;
 		const itemId = getItemId();
 		const valueSanitized = sanitizeSpecialFieldsValue(sanitizedData);
+		const connectColumns = valueSanitized.filter(f => f.columnType === BOARD_RELATION);
+		if (connectColumns.length) updateConnectColumnData({ connectColumns, boardId, itemId });
+
 		const nameField = valueSanitized.find(f => f.columnType === NAME);
-		console.log('UpdateVS==>', valueSanitized);
 		const boardQuery = createBoardQuery({
 			itemName: nameField.value,
 			itemId,
@@ -248,7 +246,7 @@ function handleSaveContact(e) {
 		console.log('boarItemColValues===>', boarItemColValues);
 		const item = { id: itemId, name: itemName, column_values: boarItemColValues };
 		const emailField = valueSanitized.find(v => v.columnType === EMAIL);
-		// upsertBoardItemByEmail({ email: emailField.value, item });
+		upsertBoardItemByEmail({ email: emailField.value, item });
 		return Notify({ message: 'Contact saved successfully!' });
 	} catch (err) {
 		console.log('SaveContactErr:', err);

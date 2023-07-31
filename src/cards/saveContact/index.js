@@ -20,7 +20,6 @@ function renderUI({ selectCols, displayFields, boardUsers }) {
 
 	for (let f of displayFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
-		// const currentConnectInput = selectCols.find(s => s.id === f.id);
 
 		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
 		if (_input) {

@@ -1,30 +1,27 @@
 import { SELECT_NULL } from '../constants';
 import { getBoardItemsFromSettingStr } from '../utils/misc';
 
-// Move data fetching part in save contact?
 export default function ConnectBoardInput(input) {
-	console.log('INP==>', input);
 	const { rowItems, boardId } = getBoardItemsFromSettingStr(input);
-	console.log('rowItems=>', rowItems);
-	console.log({ boardId });
 	return renderUI({ input, rowItems });
 }
 
 function renderUI({ input, rowItems }) {
 	const { id, title, value } = input;
-
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle('')
-		.setFieldName(id)
-		.addItem('--Select Item--', SELECT_NULL, true);
+		.setFieldName(id);
 
 	if (rowItems.length) {
+		dropdown.addItem('--Select Item--', SELECT_NULL, false);
 		for (let b of rowItems) {
-			// const isSelected = value && b.id === value.toString() ? true : false;
-			dropdown.addItem(b.name, b.id, false);
+			console.log(b.id, value);
+			const selected = b.id === value ? true : false;
+			console.log({ selected });
+			dropdown.addItem(b.name, b.id, selected);
 		}
-	}
+	} else dropdown.addItem('--Select Item--', SELECT_NULL, true);
 
 	return dropdown;
 }

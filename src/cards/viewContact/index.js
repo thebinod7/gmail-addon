@@ -63,11 +63,18 @@ function buildCard({ selectCols, dropdownCols, orderedFields, boardUsers }) {
 	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);
 	cardSection.addWidget(CardHeader).addWidget(CardDivider).addWidget(sectionTabsList);
 
+	console.log('orderedFields===>', orderedFields);
+
 	for (let f of orderedFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
 		const currentDropdowCols = dropdownCols.find(d => d.id === f.id);
-		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput, currentDropdowCols });
-		console.log('NPUT=>', _input, f.type);
+
+		let _input = createFormInputByType({
+			input: f,
+			boardUsers,
+			currentSelectInput,
+			currentDropdowCols
+		});
 		if (_input) {
 			if (f.type === BOARD_RELATION) {
 				const divider = CardService.newDivider();
