@@ -23,7 +23,8 @@ import {
 	fetchBoardSettingsStr,
 	fetchUsersByBoard,
 	createItemUpdate,
-	listItemUpdates
+	listItemUpdates,
+	updateConnectColumns
 } from './services/monday';
 import { getBoardItemByEmail, fetchGmailSettings, upsertBoardItemByEmail } from './services/offsite';
 import {
@@ -57,7 +58,7 @@ import Notify from './cards/widgets/Notify';
 
 import { BOARD_COLUMNS } from './constants';
 
-const { NAME, EMAIL } = BOARD_COLUMNS;
+const { NAME, EMAIL, BOARD_RELATION } = BOARD_COLUMNS;
 
 const onDefaultHomePageOpen = () => HomepageCard();
 
@@ -138,15 +139,15 @@ function initGmailHomeUI({ email, itemName }) {
 		saveCurrentBoardAndItem({ email, group: group || 'topics', itemName, boardId });
 		// Search in database
 		const dbResponse = getBoardItemByEmail(email); // Search email inside our DB
-		// if (dbResponse && dbResponse.data) {
-		// 	const { id } = dbResponse.data.item;
-		// 	saveItemId(id);
-		// 	return ViewContactCard({
-		// 		dbResponse: dbResponse.data,
-		// 		strColumns,
-		// 		boardUsers
-		// 	});
-		// }
+		if (dbResponse && dbResponse.data) {
+			const { id } = dbResponse.data.item;
+			saveItemId(id);
+			return ViewContactCard({
+				dbResponse: dbResponse.data,
+				strColumns,
+				boardUsers
+			});
+		}
 		const boardIds = [boardId];
 		const boardResponse = fetchBoardColumnValues(boardIds); // To search email inside Monday board
 		const rows = boardResponse.data.boards[0].items; // Select rows from matching board(input_board) response
@@ -211,10 +212,15 @@ function handleUpdateContact(e) {
 	}
 }
 
-// Create payload(columnId,columnType,value) with formData
-// Create boardItem and sanitize special fields value
-// Update extra board columns
-// Upsert boardItem with email and payload(with value and settings_str)
+const updateConnectColumnData = async ({ connectColumns, boardId, itemId }) => {
+	for (let c of connectColumns) {
+		const query = `mutation {
+			change_multiple_column_values(board_id:${boardId}, item_id:${itemId}, column_values: "{\\"${c.columnId}\\" : {\\"item_ids\\" : [${c.value}] }}"),  { id }
+		  }`;
+		await updateConnectColumns(query);
+	}
+};
+
 function handleSaveContact(e) {
 	try {
 		const allowedFields = getAllowedFields();
@@ -225,10 +231,12 @@ function handleSaveContact(e) {
 		if (!currentItem) return;
 		const { itemName, boardId, group } = currentItem;
 		const res = createBoardItem({ boardId, group, itemName });
+
 		const { id: itemId } = res.data.create_item;
 		const valueSanitized = sanitizeSpecialFieldsValue(sanitizedData);
-		console.log('VS===>', valueSanitized);
-		return;
+		const connectColumns = valueSanitized.filter(f => f.columnType === BOARD_RELATION);
+		if (connectColumns.length) updateConnectColumnData({ connectColumns, boardId, itemId });
+
 		const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });
 		const updatedExtras = updateExtraColumns(boardQuery);
 		console.log('Updated Extras=>', updatedExtras);
@@ -240,7 +248,7 @@ function handleSaveContact(e) {
 		console.log('boarItemColValues===>', boarItemColValues);
 		const item = { id: itemId, name: itemName, column_values: boarItemColValues };
 		const emailField = valueSanitized.find(v => v.columnType === EMAIL);
-		upsertBoardItemByEmail({ email: emailField.value, item });
+		// upsertBoardItemByEmail({ email: emailField.value, item });
 		return Notify({ message: 'Contact saved successfully!' });
 	} catch (err) {
 		console.log('SaveContactErr:', err);
