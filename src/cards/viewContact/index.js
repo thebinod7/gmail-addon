@@ -1,11 +1,12 @@
 import createCardHeader from '../widgets/CardHeader';
 import createCardFooterBtn from '../widgets/CardFooter';
 import createTabs from '../widgets/Tabs';
+import DecoratedWithButton from '../widgets/DecoratedWithButton';
 
 import { fieldOrderRealign, createFormInputByType, getDefaultValueByColumnType } from '../../utils';
 import { BOARD_COLUMNS, MENU_TABS } from '../../constants';
 
-const { NAME, EMAIL, COLOR, DROPDOWN } = BOARD_COLUMNS;
+const { NAME, EMAIL, COLOR, DROPDOWN, BOARD_RELATION } = BOARD_COLUMNS;
 
 export default function ViewContactCard({ boardItem = null, allowedFields, dbResponse, strColumns, boardUsers }) {
 	let displayFields;
@@ -66,7 +67,14 @@ function buildCard({ selectCols, dropdownCols, orderedFields, boardUsers }) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
 		const currentDropdowCols = dropdownCols.find(d => d.id === f.id);
 		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput, currentDropdowCols });
-		if (_input) cardSection.addWidget(_input);
+		console.log('NPUT=>', _input, f.type);
+		if (_input) {
+			if (f.type === BOARD_RELATION) {
+				const divider = CardService.newDivider();
+				const dc = DecoratedWithButton();
+				cardSection.addWidget(dc).addWidget(_input).addWidget(divider);
+			} else cardSection.addWidget(_input);
+		}
 	}
 
 	const card = CardService.newCardBuilder()

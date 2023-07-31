@@ -172,10 +172,9 @@ export const createFormInputByType = ({ input, boardUsers, currentSelectInput, c
 		case NAME: {
 			return TextInput(input);
 		}
-
 		case BOARD_RELATION: {
-			// Pass data from here
-			return ConnectBoardInput(input);
+			if (input.settings_str) return ConnectBoardInput(input);
+			else return null;
 		}
 		case TEXT: {
 			return TextInput(input);

@@ -1,8 +1,10 @@
 import { fetchColumnValues } from '../services/monday';
 
 export const getBoardItemsFromSettingStr = input => {
+	console.log('INPUT===>', input);
 	const { settings_str } = input;
 	if (!settings_str) return [];
+	console.log('STREEE=>', settings_str);
 	const boardIds = getBoardIDsFromSettingStr(settings_str);
 	const res = fetchColumnValues(boardIds);
 	const { boards } = res.data;

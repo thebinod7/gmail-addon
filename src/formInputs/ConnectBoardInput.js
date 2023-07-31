@@ -3,6 +3,7 @@ import { getBoardItemsFromSettingStr } from '../utils/misc';
 
 // Move data fetching part in save contact?
 export default function ConnectBoardInput(input) {
+	console.log('INP==>', input);
 	const { rowItems, boardId } = getBoardItemsFromSettingStr(input);
 	console.log('rowItems=>', rowItems);
 	console.log({ boardId });
