@@ -6,19 +6,21 @@ const { COLOR, BOARD_RELATION } = BOARD_COLUMNS;
 
 export default function saveContactCard({ email, itemName, allowedFields, boardUsers, strColumns }) {
 	const selectCols = strColumns.filter(f => f.type === COLOR);
-	const connectCols = strColumns.filter(f => f.type === BOARD_RELATION);
+	// const connectCols = strColumns.filter(f => f.type === BOARD_RELATION);
 
+	const ordered_fields = fieldOrderRealign(allowedFields);
+	const nameEmailAppended = appendEmailAndItemName({ fields: ordered_fields, email, itemName });
+
+	return renderUI({ selectCols, displayFields: nameEmailAppended, boardUsers });
+}
+
+function renderUI({ selectCols, displayFields, boardUsers }) {
 	const cardDivider = CardService.newDivider();
 	const section = CardService.newCardSection().setHeader('Save Contact').addWidget(cardDivider);
 
-	const ordered_fields = fieldOrderRealign(allowedFields);
-	const appended = appendEmailAndItemName({ fields: ordered_fields, email, itemName });
-
-	console.log('Appended_fields==>', appended);
-
-	for (let f of appended) {
+	for (let f of displayFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
-		const currentConnectInput = selectCols.find(s => s.id === f.id);
+		// const currentConnectInput = selectCols.find(s => s.id === f.id);
 
 		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput });
 		if (_input) {

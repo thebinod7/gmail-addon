@@ -1,4 +1,4 @@
-import { fetchBoardColumns } from '../services/monday';
+import { fetchColumnValues } from '../services/monday';
 import { SELECT_NULL } from '../constants';
 
 // Move data fetching part in save contact?
@@ -6,24 +6,24 @@ export default function ConnectBoardInput(input) {
 	console.log('Connect_Col==>', input);
 	const { settings_str } = input;
 	const boardIds = getBoardIDsFromSettingStr(settings_str);
-	const res = fetchBoardColumns(boardIds);
+	const res = fetchColumnValues(boardIds);
 	const { boards } = res.data;
-	console.log('Boards==>', boards);
+	const rowItems = boards.length ? boards[0].items : [];
 
-	return renderUI({ input, boards });
+	return renderUI({ input, rowItems });
 }
 
-function renderUI({ input, boards }) {
+function renderUI({ input, rowItems }) {
 	const { id, title, value } = input;
 
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle('')
 		.setFieldName(id)
-		.addItem('--Select Board--', SELECT_NULL, true);
+		.addItem('--Select Item--', SELECT_NULL, true);
 
-	if (boards.length) {
-		for (let b of boards) {
+	if (rowItems.length) {
+		for (let b of rowItems) {
 			// const isSelected = value && b.id === value.toString() ? true : false;
 			dropdown.addItem(b.name, b.id, false);
 		}

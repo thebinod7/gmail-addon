@@ -25,9 +25,9 @@ export const updateExtraColumns = query => {
 	return JSON.parse(res);
 };
 
-export const fetchBoardColumns = boardIds => {
+export const fetchColumnValues = boardIds => {
 	const accessToken = getToken();
-	let query = `query { boards(ids:${boardIds}, limit:${BOARD_ITEMS_LIMIT}) {id name columns{id, type, title, settings_str} }}`;
+	let query = `query { boards(ids:${boardIds}, limit:${BOARD_ITEMS_LIMIT}) { items { id name } } }`;
 	const headers = {
 		Authorization: accessToken,
 		'Content-Type': 'application/json'
