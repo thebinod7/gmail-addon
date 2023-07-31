@@ -6,15 +6,15 @@ export default function Person(input, boardUsers) {
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle(title)
-		.setFieldName(id)
-		.addItem('--Select--', SELECT_NULL, true);
+		.setFieldName(id);
 
 	if (boardUsers && boardUsers.length) {
+		dropdown.addItem('--Select--', SELECT_NULL, false);
 		for (let b of boardUsers) {
 			const isSelected = value && value.length && b.id.toString() == value[0].value ? true : false;
 			dropdown.addItem(b.name, b.id.toString(), isSelected);
 		}
-	}
+	} else dropdown.addItem('--Select--', SELECT_NULL, true);
 
 	return dropdown;
 }

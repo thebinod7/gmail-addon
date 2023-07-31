@@ -26,14 +26,14 @@ export default function SelectInput(input, currentSelectInput) {
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle(title)
-		.setFieldName(id)
-		.addItem('--Select--', SELECT_NULL, true);
+		.setFieldName(id);
 
 	if (options.length) {
+		dropdown.addItem('--Select--', SELECT_NULL, false);
 		for (let b of options) {
-			const isSelected = value && b.id === value.toString() ? true : false;
+			const isSelected = value && b.id.toString() === value.toString() ? true : false;
 			dropdown.addItem(b.label, b.id, isSelected);
 		}
-	}
+	} else dropdown.addItem('--Select--', SELECT_NULL, true);
 	return dropdown;
 }

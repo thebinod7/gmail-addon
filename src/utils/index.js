@@ -353,9 +353,8 @@ const sanitizeDropdownValues = values => {
 };
 
 export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload }) => {
-	const filteredPaylaod = boardPayload.filter(f => f.value !== SELECT_NULL);
 	let columnValues = `\\"name\\": \\"${itemName}\\"`;
-	for (let t of filteredPaylaod) {
+	for (let t of boardPayload) {
 		if (t.columnType === TEXT) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
 		if (t.columnType === DATE) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
 		if (t.columnType === LONG_TEXT) columnValues += `,\\"${t.columnId}\\": {\\"text\\" : \\"${t.value || ''}\\"}`;
@@ -368,7 +367,10 @@ export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload 
 		if (t.columnType === NUMBERS) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
 		if (t.columnType === PHONE) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
 		if (t.columnType === RATING) columnValues += `,\\"${t.columnId}\\": {\\"rating\\" : ${t.value || 0}}`;
-		if (t.columnType === COLOR) columnValues += `,\\"${t.columnId}\\": \\"${t.value || []}\\"`;
+		if (t.columnType === COLOR) {
+			const val = t.value === SELECT_NULL ? [] : t.value;
+			columnValues += `,\\"${t.columnId}\\": \\"${val}\\"`;
+		}
 		if (t.columnType === DROPDOWN) {
 			const data = sanitizeDropdownValues(t.value);
 			columnValues += `,\\"${t.columnId}\\":{\\"ids\\": [${data}]}`;

@@ -7,11 +7,12 @@ import { BOARD_COLUMNS, MENU_TABS } from '../../constants';
 
 const { NAME, EMAIL, COLOR, DROPDOWN } = BOARD_COLUMNS;
 
-export default function ViewContactCard({ boardItem = null, dbResponse, strColumns, boardUsers }) {
+export default function ViewContactCard({ boardItem = null, allowedFields, dbResponse, strColumns, boardUsers }) {
 	let displayFields;
 
 	if (boardItem) {
-		let valueAdded = getDefaultValueByColumnType(boardItem.column_values);
+		const pickedFields = pickAllowedFieldsOnly(allowedFields, boardItem.column_values);
+		let valueAdded = getDefaultValueByColumnType(pickedFields);
 		const nameField = {
 			id: NAME,
 			type: NAME,
@@ -23,8 +24,6 @@ export default function ViewContactCard({ boardItem = null, dbResponse, strColum
 		const { item } = dbResponse;
 		displayFields = item.column_values;
 	}
-
-	console.log('DP==>', displayFields.length);
 
 	const selectCols = strColumns.filter(f => f.type === COLOR);
 	const dropdownCols = strColumns.filter(f => f.type === DROPDOWN);
@@ -42,7 +41,6 @@ function getEmailAndItemName(fields) {
 }
 
 function buildCard({ selectCols, dropdownCols, orderedFields, boardUsers }) {
-	let widgets;
 	const { itemName, email } = getEmailAndItemName(orderedFields);
 
 	const CardHeader = createCardHeader({ itemName, email });
@@ -51,11 +49,9 @@ function buildCard({ selectCols, dropdownCols, orderedFields, boardUsers }) {
 
 	let cardSection = CardService.newCardSection();
 	const CardDivider = CardService.newDivider();
-
 	const CardFooter = CardService.newFixedFooter().setPrimaryButton(CardFooterBtn);
 
 	const sectionTabsList = CardService.newButtonSet().addButton(BtnContactTab).addButton(BtnUpdatesTab);
-
 	const updateContactAction = CardService.newAction().setFunctionName('handleUpdateContact').setParameters({});
 
 	const btnUpdateContact = CardService.newTextButton()
@@ -64,22 +60,27 @@ function buildCard({ selectCols, dropdownCols, orderedFields, boardUsers }) {
 		.setOnClickAction(updateContactAction);
 
 	const cardSectionUpdateBtn = CardService.newButtonSet().addButton(btnUpdateContact);
-
 	cardSection.addWidget(CardHeader).addWidget(CardDivider).addWidget(sectionTabsList);
-
-	console.log('OR_FIELDS=>', orderedFields);
 
 	for (let f of orderedFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
 		const currentDropdowCols = dropdownCols.find(d => d.id === f.id);
 		let _input = createFormInputByType({ input: f, boardUsers, currentSelectInput, currentDropdowCols });
-		if (_input) widgets = cardSection.addWidget(_input);
+		if (_input) cardSection.addWidget(_input);
 	}
 
 	const card = CardService.newCardBuilder()
-		// .setHeader(CardHeader)
 		.setFixedFooter(CardFooter)
 		.addSection(cardSection.addWidget(cardSectionUpdateBtn))
 		.build();
 	return card;
+}
+
+function pickAllowedFieldsOnly(allowedFields, allFields) {
+	const result = [];
+	for (let field of allFields) {
+		const found = allowedFields.find(f => f.id === field.id);
+		if (found) result.push(field);
+	}
+	return result;
 }
