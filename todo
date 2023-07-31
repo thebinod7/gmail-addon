@@ -7,10 +7,11 @@ Settings page
 -   Get boardIDs from settings_str of connect_column of connected_board
 -   Get board details by board IDs
 -   Create select_options from board response and display inside SELECT_INPUT (board item not board name)
--   Save connect_column
+-   Save connect_column =>
 
 # Add board item:
 
--   Display add item button =>
+-   Display add item button
+-   Pass values to ADD_ITEM_FORM =>
 -   Display all columns of connected_board
 -   Create item using

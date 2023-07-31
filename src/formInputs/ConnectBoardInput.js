@@ -1,15 +1,11 @@
-import { fetchColumnValues } from '../services/monday';
 import { SELECT_NULL } from '../constants';
+import { getBoardItemsFromSettingStr } from '../utils/misc';
 
 // Move data fetching part in save contact?
 export default function ConnectBoardInput(input) {
-	console.log('Connect_Col==>', input);
-	const { settings_str } = input;
-	const boardIds = getBoardIDsFromSettingStr(settings_str);
-	const res = fetchColumnValues(boardIds);
-	const { boards } = res.data;
-	const rowItems = boards.length ? boards[0].items : [];
-
+	const { rowItems, boardId } = getBoardItemsFromSettingStr(input);
+	console.log('rowItems=>', rowItems);
+	console.log({ boardId });
 	return renderUI({ input, rowItems });
 }
 
@@ -30,9 +26,4 @@ function renderUI({ input, rowItems }) {
 	}
 
 	return dropdown;
-}
-
-function getBoardIDsFromSettingStr(settings_str) {
-	const jsonData = JSON.parse(settings_str);
-	return jsonData?.boardIds || [];
 }

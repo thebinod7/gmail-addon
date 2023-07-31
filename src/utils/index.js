@@ -1,4 +1,4 @@
-import { BOARD_COLUMNS } from '../constants';
+import { BOARD_COLUMNS, SELECT_NULL } from '../constants';
 import {
 	DateInput,
 	EmailInput,
@@ -11,28 +11,12 @@ import {
 	ConnectBoardInput
 } from '../formInputs';
 
-const {
-	NAME,
-	DATE,
-	NUMBERS,
-	EMAIL,
-	COLOR,
-	DROPDOWN,
-	PHONE,
-	LINK,
-	TEXT,
-	BOARD_RELATION,
-	LOOKUP,
-	FILES,
-	PERSON,
-	LONG_TEXT,
-	RATING
-} = BOARD_COLUMNS;
+const { NAME, DATE, NUMBERS, EMAIL, COLOR, DROPDOWN, PHONE, LINK, TEXT, BOARD_RELATION, PERSON, LONG_TEXT, RATING } =
+	BOARD_COLUMNS;
 
 const INBOX_CONTENT_LEN = 1000;
 
 // ===================Utility Methods============================
-
 export const mapBoardColumnsAndSelectOptions = data => {
 	if (!data.length) return { mappedColumns: [], boardOptions: [] };
 	const mappedColumns = data.map(d => {
@@ -258,18 +242,18 @@ export const extractObjectKeysAndValues = obj => {
 	return { keys, values };
 };
 
-export const sanitizeColumnTypeByID = ({ keys, values, formInputs }) => {
+export const sanitizeColumnTypeByID = ({ keys, values, formInputs, allowedFields }) => {
 	let result = [];
 	for (let i = 0; i < keys.length; i++) {
 		const id = keys[i];
 		let val = values[i];
-		const colType = getColumTypeByID(id);
+		const colType = getColumTypeByID(id, allowedFields);
 		if (colType === DROPDOWN) {
 			console.log('AAA=>', formInputs[id].stringInputs);
 			val = formInputs[id].stringInputs?.value || [];
 		}
 		let d = {
-			columnType: getColumTypeByID(id),
+			columnType: getColumTypeByID(id, allowedFields),
 			columnId: id,
 			value: val
 		};
@@ -278,44 +262,10 @@ export const sanitizeColumnTypeByID = ({ keys, values, formInputs }) => {
 	return result;
 };
 
-const getColumTypeByID = id => {
-	const hasName = id.includes(NAME);
-	if (hasName) return NAME;
-
-	const hasText = id.includes(TEXT);
-	if (hasText) return TEXT;
-
-	const hasDropdown = id.includes(DROPDOWN);
-	if (hasDropdown) return DROPDOWN;
-
-	const hasEmail = id.includes(EMAIL);
-	if (hasEmail) return EMAIL;
-
-	const hasPhone = id.includes(PHONE);
-	if (hasPhone) return PHONE;
-
-	const hasLink = id.includes(LINK);
-	if (hasLink) return LINK;
-
-	const hasDate = id.includes(DATE);
-	if (hasDate) return DATE;
-
-	const hasPerson = id.includes('person');
-	if (hasPerson) return PERSON;
-
-	const hasColor = id.includes(COLOR);
-	if (hasColor) return COLOR;
-
-	const hasStatus = id.includes('status');
-	if (hasStatus) return COLOR;
-
-	const hasNumber = id.includes(NUMBERS);
-	if (hasNumber) return NUMBERS;
-
-	const hasFiles = id.includes(FILES);
-	if (hasFiles) return FILES;
-
-	return TEXT;
+const getColumTypeByID = (id, allowedFields) => {
+	const found = allowedFields.find(f => f.id === id);
+	if (!found) return TEXT;
+	return found.type;
 };
 
 const createPersonPayload = users => {
@@ -323,8 +273,10 @@ const createPersonPayload = users => {
 	if (!users.length) return usersList;
 	if (users.length) {
 		for (let u of users) {
-			let d = `{\\"id\\":${u.value},\\"kind\\":\\"person\\"}`;
-			usersList.push(d);
+			if (u.value !== SELECT_NULL) {
+				let d = `{\\"id\\":${u.value},\\"kind\\":\\"person\\"}`;
+				usersList.push(d);
+			}
 		}
 	}
 	return usersList;
@@ -401,8 +353,9 @@ const sanitizeDropdownValues = values => {
 };
 
 export const createBoardQuery = ({ itemName = '', itemId, boardId, boardPayload }) => {
+	const filteredPaylaod = boardPayload.filter(f => f.value !== SELECT_NULL);
 	let columnValues = `\\"name\\": \\"${itemName}\\"`;
-	for (let t of boardPayload) {
+	for (let t of filteredPaylaod) {
 		if (t.columnType === TEXT) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
 		if (t.columnType === DATE) columnValues += `,\\"${t.columnId}\\": \\"${t.value || ''}\\"`;
 		if (t.columnType === LONG_TEXT) columnValues += `,\\"${t.columnId}\\": {\\"text\\" : \\"${t.value || ''}\\"}`;
