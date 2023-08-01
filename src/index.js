@@ -59,6 +59,7 @@ import Notify from './cards/widgets/Notify';
 import { BOARD_COLUMNS } from './constants';
 
 const { NAME, EMAIL, BOARD_RELATION } = BOARD_COLUMNS;
+const FIRST_GROUP = 'topics';
 
 const onDefaultHomePageOpen = () => HomepageCard();
 
@@ -303,9 +304,27 @@ function handleAddConnectItemClick(e) {
 	return AddBoardItemCard({ currentConnectBoard });
 }
 
+// Save item
+// Update extra cols
+// Get back to homepage(email,itemName)
 function handleSaveConnectBoardItem(e) {
 	try {
-		console.log('===>>>>>', e);
+		const { formInputs, parameters } = e.commonEventObject;
+		const jsonObjectColumns = JSON.parse(parameters.columns);
+		const { keys, values } = extractObjectKeysAndValues(e.formInput);
+		const sanitizedData = sanitizeColumnTypeByID({ keys, values, formInputs, allowedFields: jsonObjectColumns });
+		const nameField = sanitizedData.find(f => f.columnType === NAME);
+		const itemName = nameField?.value || '';
+		if (!itemName) return Notify({ message: 'Item name is required!' });
+		const { boardId } = parameters;
+		const res = createBoardItem({ boardId, group: FIRST_GROUP, itemName });
+
+		const { id: itemId } = res.data.create_item;
+		const valueSanitized = sanitizeSpecialFieldsValue(sanitizedData);
+		const boardQuery = createBoardQuery({ itemId, boardId, boardPayload: valueSanitized });
+		updateExtraColumns(boardQuery);
+		const { itemName: currentBoardItem, email = '' } = getCurrentBoardAndItem();
+		return initGmailHomeUI({ itemName: currentBoardItem, email });
 	} catch (err) {
 		console.log('SaveConnectBoardItemErr:', err);
 	}

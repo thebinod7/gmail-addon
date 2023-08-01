@@ -78,7 +78,7 @@ function buildCard({ selectCols, dropdownCols, orderedFields, boardUsers }) {
 		if (_input) {
 			if (f.type === BOARD_RELATION) {
 				const divider = CardService.newDivider();
-				const dc = DecoratedWithButton();
+				const dc = DecoratedWithButton({ inputColumn: f });
 				cardSection.addWidget(dc).addWidget(_input).addWidget(divider);
 			} else cardSection.addWidget(_input);
 		}

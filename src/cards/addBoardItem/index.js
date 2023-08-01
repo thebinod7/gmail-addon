@@ -4,10 +4,6 @@ import { createFormInputByType } from '../../utils';
 
 const { COLOR, BOARD_RELATION } = BOARD_COLUMNS;
 
-// Fetch and populate users => DONE
-// Save item
-// Update extra cols
-// Get back to homepage(email,itemName)
 export default function addBoardItemCard({ currentConnectBoard }) {
 	if (!currentConnectBoard) return renderBlankUI();
 	try {
@@ -18,13 +14,13 @@ export default function addBoardItemCard({ currentConnectBoard }) {
 		const { boards } = res.data;
 		const foundBoard = boards.length ? boards[0] : null;
 		if (!foundBoard) return renderBlankUI();
-		return renderFormUI({ foundBoard, boardUsers });
+		return renderFormUI({ foundBoard, boardUsers, boardId: currentConnectBoard });
 	} catch (err) {
 		console.log('ConnectBoardColumFetchErr:', err);
 	}
 }
 
-function renderFormUI({ foundBoard, boardUsers }) {
+function renderFormUI({ foundBoard, boardUsers, boardId }) {
 	console.log('FOUND==>', foundBoard);
 	const { columns } = foundBoard;
 	const cardDivider = CardService.newDivider();
@@ -35,7 +31,10 @@ function renderFormUI({ foundBoard, boardUsers }) {
 		if (_input) section.addWidget(_input);
 	}
 
-	const formAction = CardService.newAction().setFunctionName('handleSaveConnectBoardItem');
+	const jsonStringColumns = JSON.stringify(columns);
+	const formAction = CardService.newAction()
+		.setFunctionName('handleSaveConnectBoardItem')
+		.setParameters({ columns: jsonStringColumns, boardId });
 	const btnSubmit = CardService.newTextButton()
 		.setText('Submit')
 		.setOnClickAction(formAction)
