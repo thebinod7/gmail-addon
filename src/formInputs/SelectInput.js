@@ -21,6 +21,19 @@ export default function SelectInput(input, currentSelectInput) {
 				}
 			}
 		}
+	} else {
+		const opts = JSON.parse(input.settings_str);
+		const keys = Object.keys(opts.labels);
+		const values = Object.values(opts.labels);
+		if (keys.length && values.length) {
+			for (let i = 0; i < keys.length; i++) {
+				let opt = {
+					id: keys[i],
+					label: values[i]
+				};
+				options.push(opt);
+			}
+		}
 	}
 
 	let dropdown = CardService.newSelectionInput()

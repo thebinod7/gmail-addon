@@ -16,9 +16,7 @@ function renderUI({ input, rowItems }) {
 	if (rowItems.length) {
 		dropdown.addItem('--Select Item--', SELECT_NULL, false);
 		for (let b of rowItems) {
-			console.log(b.id, value);
 			const selected = b.id === value ? true : false;
-			console.log({ selected });
 			dropdown.addItem(b.name, b.id, selected);
 		}
 	} else dropdown.addItem('--Select Item--', SELECT_NULL, true);

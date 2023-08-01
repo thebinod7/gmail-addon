@@ -25,7 +25,7 @@ function renderUI({ selectCols, displayFields, boardUsers }) {
 		if (_input) {
 			if (f.type === BOARD_RELATION) {
 				const divider = CardService.newDivider();
-				const dc = DecoratedWithButton();
+				const dc = DecoratedWithButton({ inputColumn: f });
 				section.addWidget(dc).addWidget(_input).addWidget(divider);
 			} else section.addWidget(_input);
 		}

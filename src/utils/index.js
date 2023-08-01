@@ -248,7 +248,6 @@ export const sanitizeColumnTypeByID = ({ keys, values, formInputs, allowedFields
 		let val = values[i];
 		const colType = getColumTypeByID(id, allowedFields);
 		if (colType === DROPDOWN) {
-			console.log('AAA=>', formInputs[id].stringInputs);
 			val = formInputs[id].stringInputs?.value || [];
 		}
 		let d = {

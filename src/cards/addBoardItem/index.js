@@ -1,4 +1,11 @@
-export default function addBoardItemCard() {
+export default function addBoardItemCard({ currentConnectBoard }) {
+	// Fetch board columns
+	// Display form
+	// Save form data
+	return renderUI();
+}
+
+function renderUI() {
 	const firstTimeMsg = CardService.newTextParagraph().setText('Add board item');
 
 	const updatedCard = CardService.newCardBuilder()

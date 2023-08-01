@@ -1,5 +1,15 @@
-export default function DecoratedWithButton() {
-	let btnAction = CardService.newAction().setFunctionName('handleAddConnectItemClick').setParameters({});
+import { getBoardItemsFromSettingStr } from '../../utils/misc';
+
+export default function DecoratedWithButton({ inputColumn = null }) {
+	let currentConnectBoard = null;
+	if (inputColumn) {
+		const { boardId } = getBoardItemsFromSettingStr(inputColumn);
+		currentConnectBoard = boardId.toString();
+	}
+
+	let btnAction = CardService.newAction()
+		.setFunctionName('handleAddConnectItemClick')
+		.setParameters({ currentConnectBoard });
 
 	let decoratedSection = CardService.newTextButton()
 		.setText('Add')

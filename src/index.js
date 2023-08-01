@@ -299,10 +299,8 @@ function handleMondayBoardChange(e) {
 }
 
 function handleAddConnectItemClick(e) {
-	console.log('ADD=>', e);
-	// Fetch board columns
-	// Pass o the card
-	return AddBoardItemCard();
+	const { currentConnectBoard } = e.commonEventObject.parameters;
+	return AddBoardItemCard({ currentConnectBoard });
 }
 
 global.onGmailMessageOpen = onGmailMessageOpen;
