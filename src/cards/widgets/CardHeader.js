@@ -1,8 +1,4 @@
-export default function CardHeader({
-	itemName = 'lorem ipsum',
-	email = 'example@mail.com',
-	imageUrl = 'https://source.unsplash.com/featured/320x180?nature&sig=8'
-}) {
+export default function CardHeader({ itemName = 'lorem ipsum', email = '' }) {
 	const ICON_URL = 'https://app.addoffsite.com/img/icons/settings.png';
 	let settingsAction = CardService.newAction().setFunctionName('handleSettingIconClick').setParameters({});
 
@@ -11,16 +7,9 @@ export default function CardHeader({
 		.setAltText('Settings')
 		.setOnClickAction(settingsAction);
 
-	let decoratedCard = CardService.newDecoratedText()
-		.setText(itemName)
-		.setBottomLabel(email)
-		.setWrapText(true)
-		.setButton(settingsBtn);
+	let decoratedCard = CardService.newDecoratedText().setText(itemName).setWrapText(true).setButton(settingsBtn);
+
+	if (email) decoratedCard.setBottomLabel(email);
 
 	return decoratedCard;
-	return CardService.newCardHeader()
-		.setTitle(itemName)
-		.setSubtitle(email)
-		.setImageUrl(imageUrl)
-		.setImageStyle(CardService.ImageStyle.CIRCLE);
 }

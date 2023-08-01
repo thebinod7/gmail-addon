@@ -1,6 +1,7 @@
 import { fieldOrderRealign, createFormInputByType, appendEmailAndItemName } from '../../utils';
 import { BOARD_COLUMNS } from '../../constants';
 import DecoratedWithButton from '../widgets/DecoratedWithButton';
+import createCardHeader from '../widgets/CardHeader';
 
 const { COLOR, BOARD_RELATION } = BOARD_COLUMNS;
 
@@ -15,8 +16,12 @@ export default function saveContactCard({ email, itemName, allowedFields, boardU
 }
 
 function renderUI({ selectCols, displayFields, boardUsers }) {
+	const CardHeader = createCardHeader({ itemName: 'Save Contact', email: '' });
+
 	const cardDivider = CardService.newDivider();
-	const section = CardService.newCardSection().setHeader('Save Contact').addWidget(cardDivider);
+	const section = CardService.newCardSection();
+
+	section.addWidget(CardHeader).addWidget(cardDivider);
 
 	for (let f of displayFields) {
 		const currentSelectInput = selectCols.find(s => s.id === f.id);
