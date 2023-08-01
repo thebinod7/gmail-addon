@@ -2,12 +2,12 @@ import { SELECT_NULL } from '../constants';
 import { getBoardItemsFromSettingStr } from '../utils/misc';
 
 export default function ConnectBoardInput(input) {
-	const { rowItems, boardId } = getBoardItemsFromSettingStr(input);
+	const { rowItems } = getBoardItemsFromSettingStr(input);
 	return renderUI({ input, rowItems });
 }
 
 function renderUI({ input, rowItems }) {
-	const { id, title, value } = input;
+	const { id, value = '' } = input;
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle('')

@@ -1,7 +1,7 @@
 import { SELECT_NULL } from '../constants';
 
 export default function Person(input, boardUsers) {
-	const { id, title, value } = input;
+	const { id, title, value = '' } = input;
 
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)

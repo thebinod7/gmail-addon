@@ -303,6 +303,14 @@ function handleAddConnectItemClick(e) {
 	return AddBoardItemCard({ currentConnectBoard });
 }
 
+function handleSaveConnectBoardItem(e) {
+	try {
+		console.log('===>>>>>', e);
+	} catch (err) {
+		console.log('SaveConnectBoardItemErr:', err);
+	}
+}
+
 global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
@@ -317,3 +325,4 @@ global.handleItemUpdateClick = handleItemUpdateClick;
 global.handleSettingIconClick = handleSettingIconClick;
 global.handleMondayBoardChange = handleMondayBoardChange;
 global.handleAddConnectItemClick = handleAddConnectItemClick;
+global.handleSaveConnectBoardItem = handleSaveConnectBoardItem;

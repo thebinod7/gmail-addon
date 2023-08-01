@@ -8,7 +8,8 @@ import {
 	SelectInput,
 	TextInput,
 	DropdownInput,
-	ConnectBoardInput
+	ConnectBoardInput,
+	NumberInput
 } from '../formInputs';
 
 const { NAME, DATE, NUMBERS, EMAIL, COLOR, DROPDOWN, PHONE, LINK, TEXT, BOARD_RELATION, PERSON, LONG_TEXT, RATING } =
@@ -179,6 +180,9 @@ export const createFormInputByType = ({ input, boardUsers, currentSelectInput, c
 		case TEXT: {
 			return TextInput(input);
 		}
+		case NUMBERS: {
+			return NumberInput(input);
+		}
 		case DROPDOWN: {
 			return DropdownInput(input, currentDropdowCols);
 		}
@@ -202,7 +206,7 @@ export const createFormInputByType = ({ input, boardUsers, currentSelectInput, c
 		}
 
 		default:
-			return '';
+			return null;
 	}
 };
 
