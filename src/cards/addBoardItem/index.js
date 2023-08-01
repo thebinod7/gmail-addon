@@ -1,8 +1,5 @@
 import { fetchBoardColumns, fetchUsersByBoard } from '../../services/monday';
-import { BOARD_COLUMNS } from '../../constants';
 import { createFormInputByType } from '../../utils';
-
-const { COLOR, BOARD_RELATION } = BOARD_COLUMNS;
 
 export default function addBoardItemCard({ currentConnectBoard }) {
 	if (!currentConnectBoard) return renderBlankUI();
@@ -21,7 +18,6 @@ export default function addBoardItemCard({ currentConnectBoard }) {
 }
 
 function renderFormUI({ foundBoard, boardUsers, boardId }) {
-	console.log('FOUND==>', foundBoard);
 	const { columns } = foundBoard;
 	const cardDivider = CardService.newDivider();
 	const section = CardService.newCardSection().setHeader('Add Board Item').addWidget(cardDivider);

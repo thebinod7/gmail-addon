@@ -2,6 +2,7 @@ import { getBoardItemsFromSettingStr } from '../../utils/misc';
 
 export default function DecoratedWithButton({ inputColumn = null }) {
 	let currentConnectBoard = null;
+	const title = inputColumn?.title || 'Board';
 	if (inputColumn) {
 		const { boardId } = getBoardItemsFromSettingStr(inputColumn);
 		currentConnectBoard = boardId.toString();
@@ -16,7 +17,7 @@ export default function DecoratedWithButton({ inputColumn = null }) {
 		.setTextButtonStyle(CardService.TextButtonStyle.TEXT)
 		.setOnClickAction(btnAction);
 
-	let decoratedCard = CardService.newDecoratedText().setText('Associate Item').setButton(decoratedSection);
+	let decoratedCard = CardService.newDecoratedText().setText(`Associate ${title}`).setButton(decoratedSection);
 
 	return decoratedCard;
 }

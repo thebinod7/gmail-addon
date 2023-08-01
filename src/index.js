@@ -304,9 +304,6 @@ function handleAddConnectItemClick(e) {
 	return AddBoardItemCard({ currentConnectBoard });
 }
 
-// Save item
-// Update extra cols
-// Get back to homepage(email,itemName)
 function handleSaveConnectBoardItem(e) {
 	try {
 		const { formInputs, parameters } = e.commonEventObject;
