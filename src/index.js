@@ -329,6 +329,14 @@ function handleSaveConnectBoardItem(e) {
 	}
 }
 
+function handleSaveSettings() {
+	console.log('Save settings!');
+	try {
+	} catch (err) {
+		console.log('SaveSettingsErrr:', err);
+	}
+}
+
 global.onGmailMessageOpen = onGmailMessageOpen;
 global.onDefaultHomePageOpen = onDefaultHomePageOpen;
 global.handleLoginClick = handleLoginClick;
@@ -344,3 +352,4 @@ global.handleSettingIconClick = handleSettingIconClick;
 global.handleMondayBoardChange = handleMondayBoardChange;
 global.handleAddConnectItemClick = handleAddConnectItemClick;
 global.handleSaveConnectBoardItem = handleSaveConnectBoardItem;
+global.handleSaveSettings = handleSaveSettings;

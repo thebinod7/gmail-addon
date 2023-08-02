@@ -2,9 +2,15 @@
 Input validations
 Settings page
 
-# Add board item:
+# Add/Update settings:
 
--   Display add item button
--   Pass values to ADD_ITEM_FORM =>
--   Display all columns of connected_board
--   Create item using
+-   Get columns by selected boardID
+-   Sort and sanitize columns
+-   Populate selector input with columns
+
+-   Fetch settings by accountID
+-   Get CRM settings by accountID
+-   Populate form with selected data
+
+-   Handle role access
+-   Handle board subscriber avail

@@ -5,6 +5,7 @@ import { filterBoardByUser, mapGroupsByBoard, filterSubitemBoards, mapBoardColum
 import createHeaderTxt from './HeaderText';
 import createBoardSelector from './BoardSelector';
 import { SELECT_NULL } from '../../constants';
+import createColumnSelector from '../widgets/BoardColumnSelector';
 
 export default function UpdateSettingsCard({ currentBoard }) {
 	try {
@@ -15,12 +16,11 @@ export default function UpdateSettingsCard({ currentBoard }) {
 		const mappedGroups = mapGroupsByBoard(boards);
 		const filteredBoards = filterSubitemBoards(boards);
 		const { mappedColumns, boardOptions } = mapBoardColumnsAndSelectOptions(filteredBoards);
-		console.log('MappedCols=>', mappedColumns);
-		console.log('BoardOpts==>', boardOptions);
+		console.log('COLUMNS=>', mappedColumns[0].columns);
 		// Render board select DROPDOWN
 		// Fetch settings by accountID
-		// If settings exist => Render form with selectors
-		// If board selected => Render fields with selectors
+		// If settings exist => Render form  fields with selectors
+		// If board selected => Render form fields with selectors
 		return renderUI({ boardOptions, currentBoard });
 	} catch (err) {
 		console.log('UpdateSettingsCardErr=>', err);
@@ -32,6 +32,11 @@ function renderUI({ boardOptions, currentBoard }) {
 	let cardDivider = CardService.newDivider();
 
 	let selectInput = createBoardSelector();
+	const formAction = CardService.newAction().setFunctionName('handleSaveSettings');
+	const btnSubmit = CardService.newTextButton()
+		.setText('Submit')
+		.setOnClickAction(formAction)
+		.setTextButtonStyle(CardService.TextButtonStyle.FILLED);
 
 	if (boardOptions.length) {
 		selectInput.addItem('--Select--', SELECT_NULL, false);
@@ -42,7 +47,16 @@ function renderUI({ boardOptions, currentBoard }) {
 	} else selectInput.addItem('--Select--', SELECT_NULL, true);
 
 	const text = createHeaderTxt();
-	let cardSection = CardService.newCardSection().addWidget(text).addWidget(cardDivider).addWidget(selectInput);
+	const columnSelector = createColumnSelector();
+
+	let cardSection = CardService.newCardSection()
+		.addWidget(text)
+		.addWidget(cardDivider)
+		.addWidget(selectInput)
+		.addWidget(columnSelector)
+		.addWidget(columnSelector)
+		.addWidget(columnSelector)
+		.addWidget(btnSubmit);
 
 	let card = CardService.newCardBuilder().addSection(cardSection).build();
 	return card;
