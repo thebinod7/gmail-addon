@@ -51,8 +51,10 @@ import {
 	getCurrentAccount,
 	saveCurrentAccount
 } from './utils/localStorage';
+
+import { appendConnectColumn } from './utils/misc';
 import Notify from './cards/widgets/Notify';
-import { BOARD_COLUMNS, SELECT_NULL } from './constants';
+import { BOARD_COLUMNS, SELECT_NULL, DEFUALT_FIELDS } from './constants';
 
 const MONDAY_AUTH_URL = process.env.MONDAY_AUTH_URL;
 const MONDAY_CLIENT_ID = process.env.APP_CLIENT_ID;
@@ -344,7 +346,7 @@ function getSelectedColumnsOnly(columns, formInputs) {
 	return result;
 }
 
-// TODO: append itemName, email and connect columns
+// TODO: Require name and email fields
 function handleSaveSettings(e) {
 	try {
 		const { account } = getCurrentAccount();
@@ -356,7 +358,8 @@ function handleSaveSettings(e) {
 		const jsonColumns = JSON.parse(columns);
 
 		const selectedCols = getSelectedColumnsOnly(jsonColumns, formInputs);
-
+		const connectColumsAdded = appendConnectColumn(selectedCols, jsonColumns);
+		const allColumns = [...connectColumsAdded, ...DEFUALT_FIELDS];
 		const currentGroup = jsonGroups.find(j => j.boardId === jsonBoardData.value);
 		const payload = {
 			serviceName: GMAIL_SERVICE,
@@ -364,8 +367,9 @@ function handleSaveSettings(e) {
 			formName: GMAIL_CONTACT,
 			board: jsonBoardData,
 			group: currentGroup.groupId,
-			allowedFields: selectedCols // id,type,title,settings_str
+			allowedFields: allColumns // id,type,title,settings_str
 		};
+		console.log('Payload==>', payload);
 		//saveCRMSettings(payload);
 		return Notify({ message: 'Settings saved successfully!' });
 	} catch (err) {

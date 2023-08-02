@@ -1,12 +1,7 @@
 ======================
 Input validations
-Settings page
 
 # Add/Update settings:
-
--   Get columns by selected boardID
--   Sort and sanitize columns
--   Populate selector input with columns
 
 -   Fetch settings by accountID
 -   Get CRM settings by accountID

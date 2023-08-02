@@ -21,6 +21,7 @@ module.exports = {
 		CONTACT: 'Contact',
 		UPDATES: 'Updates'
 	},
+	DEFUALT_FIELDS: [{ id: 'name', type: 'name', title: 'Item Name' }],
 	BOARD_COLUMNS: BOARD_COLUMNS_MAPPING,
 	SAMPLE_DATA: [
 		{ id: 'name', type: 'name', title: 'Item Name', text: '', value: '' },

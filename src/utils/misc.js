@@ -1,7 +1,14 @@
 import { fetchColumnValues } from '../services/monday';
 import { BOARD_COLUMNS } from '../constants';
 
-const { NAME, RATING, EMAIL, PERSON, PHONE, LINK, COLOR, DROPDOWN, DATE, FILES, TEXT, NUMBERS } = BOARD_COLUMNS;
+const { RATING, EMAIL, PERSON, PHONE, LINK, COLOR, DROPDOWN, DATE, FILES, TEXT, NUMBERS, LOOKUP, BOARD_RELATION } =
+	BOARD_COLUMNS;
+
+export const appendConnectColumn = (payloadColumns, boardColumns) => {
+	const connectColumns = boardColumns.filter(f => f.type === BOARD_RELATION);
+	const mirrorColumns = boardColumns.filter(f => f.type === LOOKUP);
+	return [...payloadColumns, ...connectColumns, ...mirrorColumns];
+};
 
 export const getBoardItemsFromSettingStr = input => {
 	const settings_str = input?.settings_str || '';
