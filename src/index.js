@@ -12,7 +12,8 @@ import {
 	AuthorizationCard,
 	ViewContactCard,
 	SettingsCard,
-	AddBoardItemCard
+	AddBoardItemCard,
+	UpdateSettingsCard
 } from './cards';
 import {
 	fetchMondayAccessToken,
@@ -297,7 +298,7 @@ function handleMondayBoardChange(e) {
 	const obj = e.commonEventObject;
 	const boardIds = obj.formInputs.selectedMondayBoard.stringInputs?.value || [];
 	const boardId = boardIds.length ? boardIds[0] : null;
-	console.log({ boardId });
+	return UpdateSettingsCard({ currentBoard: boardId });
 }
 
 function handleAddConnectItemClick(e) {

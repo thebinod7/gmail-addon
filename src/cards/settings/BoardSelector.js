@@ -1,5 +1,3 @@
-import { SELECT_NULL } from '../../constants';
-
 export default function BoardSelector() {
 	const dropdownAction = CardService.newAction().setFunctionName('handleMondayBoardChange');
 
@@ -7,8 +5,7 @@ export default function BoardSelector() {
 		.setFieldName('selectedMondayBoard')
 		.setTitle('Monday Boards')
 		.setOnChangeAction(dropdownAction)
-		.setType(CardService.SelectionInputType.DROPDOWN)
-		.addItem('--Select--', SELECT_NULL, true);
+		.setType(CardService.SelectionInputType.DROPDOWN);
 
 	return selectInput;
 }
