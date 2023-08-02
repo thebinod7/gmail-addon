@@ -22,7 +22,7 @@ import {
 	listItemUpdates,
 	updateConnectColumns
 } from './services/monday';
-import { getBoardItemByEmail, fetchGmailSettings, upsertBoardItemByEmail } from './services/offsite';
+import { getBoardItemByEmail, fetchGmailSettings, upsertBoardItemByEmail, saveCRMSettings } from './services/offsite';
 import {
 	extractEmailAddress,
 	findEmailInBoardRow,
@@ -52,7 +52,7 @@ import {
 	saveCurrentAccount
 } from './utils/localStorage';
 import Notify from './cards/widgets/Notify';
-import { BOARD_COLUMNS } from './constants';
+import { BOARD_COLUMNS, SELECT_NULL } from './constants';
 
 const MONDAY_AUTH_URL = process.env.MONDAY_AUTH_URL;
 const MONDAY_CLIENT_ID = process.env.APP_CLIENT_ID;
@@ -331,27 +331,43 @@ function handleSaveConnectBoardItem(e) {
 	}
 }
 
+function getSelectedColumnsOnly(columns, formInputs) {
+	const result = [];
+	for (let c of columns) {
+		const current = formInputs[c.id];
+		if (current && current.stringInputs) {
+			const { value = [] } = current.stringInputs;
+			const hasNull = value.includes(SELECT_NULL);
+			if (!hasNull) result.push(c);
+		}
+	}
+	return result;
+}
+
+// TODO: append itemName, email and connect columns
 function handleSaveSettings(e) {
-	const { account } = getCurrentAccount();
-
-	const { formInputs, parameters } = e.commonEventObject;
-	console.log('FORM_INPUTS=>', formInputs);
-	const { groups, columns, boardData } = parameters;
-	const jsonGroups = JSON.parse(groups);
-	const jsonBoardData = JSON.parse(boardData);
-
-	const currentGroup = jsonGroups.find(j => j.boardId === jsonBoardData.value);
-	const payload = {
-		serviceName: GMAIL_SERVICE,
-		accountId: account.id,
-		formName: GMAIL_CONTACT,
-		board: jsonBoardData,
-		group: currentGroup.groupId,
-		allowedFields: columns // id,type,title,settings_str
-	};
-	console.log('Payload==>', payload);
-	return Notify({ message: 'Settings saved successfully!' });
 	try {
+		const { account } = getCurrentAccount();
+		const { formInputs, parameters } = e.commonEventObject;
+		const { groups, columns, boardData } = parameters;
+
+		const jsonGroups = JSON.parse(groups);
+		const jsonBoardData = JSON.parse(boardData);
+		const jsonColumns = JSON.parse(columns);
+
+		const selectedCols = getSelectedColumnsOnly(jsonColumns, formInputs);
+
+		const currentGroup = jsonGroups.find(j => j.boardId === jsonBoardData.value);
+		const payload = {
+			serviceName: GMAIL_SERVICE,
+			accountId: account.id,
+			formName: GMAIL_CONTACT,
+			board: jsonBoardData,
+			group: currentGroup.groupId,
+			allowedFields: selectedCols // id,type,title,settings_str
+		};
+		//saveCRMSettings(payload);
+		return Notify({ message: 'Settings saved successfully!' });
 	} catch (err) {
 		console.log('SaveSettingsErrr:', err);
 	}

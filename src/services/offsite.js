@@ -17,6 +17,23 @@ export const getBoardItemByEmail = email => {
 	return JSON.parse(res);
 };
 
+export const saveCRMSettings = body => {
+	const headers = {
+		apisecret: OFFSITE_API_SECRET,
+		'Content-Type': 'application/json'
+	};
+	const options = {
+		method: 'post',
+		contentType: 'application/json',
+		muteHttpExceptions: true,
+		headers: headers,
+		payload: JSON.stringify(body)
+	};
+	const backendUrl = OFFSITE_API_ENDPOINT + '/api/v1/crm-settings';
+	const res = UrlFetchApp.fetch(backendUrl, options);
+	return JSON.parse(res);
+};
+
 export const upsertBoardItemByEmail = body => {
 	const headers = {
 		apisecret: OFFSITE_API_SECRET,
