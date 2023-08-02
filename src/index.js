@@ -295,8 +295,9 @@ function handleSettingIconClick() {
 
 function handleMondayBoardChange(e) {
 	const obj = e.commonEventObject;
-	console.log('E==>', e);
-	console.log('OBJECT==>', obj.formInputs.selectedMondayBoard.stringInputs);
+	const boardIds = obj.formInputs.selectedMondayBoard.stringInputs?.value || [];
+	const boardId = boardIds.length ? boardIds[0] : null;
+	console.log({ boardId });
 }
 
 function handleAddConnectItemClick(e) {

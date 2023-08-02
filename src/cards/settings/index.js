@@ -1,7 +1,9 @@
 import { fetchBoardItems } from '../../services/monday';
 import { getCurrentAccount } from '../../utils/localStorage';
 import { filterBoardByUser, mapGroupsByBoard, filterSubitemBoards, mapBoardColumnsAndSelectOptions } from '../../utils';
-import { SELECT_NULL } from '../../constants';
+
+import createHeaderTxt from './HeaderText';
+import createBoardSelector from './BoardSelector';
 
 export default function SettingsCard() {
 	try {
@@ -25,33 +27,18 @@ export default function SettingsCard() {
 }
 
 function newSettingsCard({ boardOptions }) {
-	let decoratedText = CardService.newDecoratedText()
-		.setText('Now you can map your Contacts Board for saving contacts directly from Gmail.')
-		.setWrapText(true);
-
 	let cardDivider = CardService.newDivider();
 
-	const dropdownAction = CardService.newAction()
-		.setFunctionName('handleMondayBoardChange')
-		.setParameters({ msg: 'Hello' });
-
-	let selectInput = CardService.newSelectionInput()
-		.setFieldName('selectedMondayBoard')
-		.setTitle('Monday Boards')
-		.setOnChangeAction(dropdownAction)
-		.setType(CardService.SelectionInputType.DROPDOWN)
-		.addItem('--Select--', SELECT_NULL, true);
+	let selectInput = createBoardSelector();
 
 	if (boardOptions.length) {
 		for (let b of boardOptions) {
-			selectInput.addItem(b.label, b.id, false);
+			selectInput.addItem(b.label, b.value.toString(), false);
 		}
 	}
 
-	let cardSection = CardService.newCardSection()
-		.addWidget(decoratedText)
-		.addWidget(cardDivider)
-		.addWidget(selectInput);
+	const text = createHeaderTxt();
+	let cardSection = CardService.newCardSection().addWidget(text).addWidget(cardDivider).addWidget(selectInput);
 
 	let card = CardService.newCardBuilder().addSection(cardSection).build();
 	return card;
