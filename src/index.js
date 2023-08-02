@@ -1,8 +1,3 @@
-const MONDAY_AUTH_URL = process.env.MONDAY_AUTH_URL;
-const MONDAY_CLIENT_ID = process.env.APP_CLIENT_ID;
-const MONDAY_CLIENT_SECRET = process.env.CLIENT_SECRET;
-const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
-
 import {
 	HomepageCard,
 	ItemUpdatesCard,
@@ -53,11 +48,18 @@ import {
 	getItemId,
 	saveScrapedEmailData,
 	getScrapedEmailData,
+	getCurrentAccount,
 	saveCurrentAccount
 } from './utils/localStorage';
 import Notify from './cards/widgets/Notify';
-
 import { BOARD_COLUMNS } from './constants';
+
+const MONDAY_AUTH_URL = process.env.MONDAY_AUTH_URL;
+const MONDAY_CLIENT_ID = process.env.APP_CLIENT_ID;
+const MONDAY_CLIENT_SECRET = process.env.CLIENT_SECRET;
+const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
+const GMAIL_SERVICE = 'Gmail';
+const GMAIL_CONTACT = 'Gmail Contact';
 
 const { NAME, EMAIL, BOARD_RELATION } = BOARD_COLUMNS;
 const FIRST_GROUP = 'topics';
@@ -329,8 +331,26 @@ function handleSaveConnectBoardItem(e) {
 	}
 }
 
-function handleSaveSettings() {
-	console.log('Save settings!');
+function handleSaveSettings(e) {
+	const { account } = getCurrentAccount();
+
+	const { formInputs, parameters } = e.commonEventObject;
+	console.log('FORM_INPUTS=>', formInputs);
+	const { groups, columns, boardData } = parameters;
+	const jsonGroups = JSON.parse(groups);
+	const jsonBoardData = JSON.parse(boardData);
+
+	const currentGroup = jsonGroups.find(j => j.boardId === jsonBoardData.value);
+	const payload = {
+		serviceName: GMAIL_SERVICE,
+		accountId: account.id,
+		formName: GMAIL_CONTACT,
+		board: jsonBoardData,
+		group: currentGroup.groupId,
+		allowedFields: columns // id,type,title,settings_str
+	};
+	console.log('Payload==>', payload);
+	return Notify({ message: 'Settings saved successfully!' });
 	try {
 	} catch (err) {
 		console.log('SaveSettingsErrr:', err);

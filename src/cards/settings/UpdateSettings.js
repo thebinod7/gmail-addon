@@ -26,18 +26,25 @@ export default function UpdateSettingsCard({ currentBoard }) {
 		// Fetch settings by accountID
 		// If settings exist => Render form  fields with selectors
 		// If board selected => Render form fields with selectors
-		return renderUI({ boardOptions, columnOptions, currentBoard, columns: found?.columns || [] });
+		return renderUI({ boardOptions, columnOptions, currentBoard, mappedGroups, columns: found?.columns || [] });
 	} catch (err) {
 		console.log('UpdateSettingsCardErr=>', err);
 	}
 }
 
-function renderUI({ boardOptions, currentBoard, columns, columnOptions }) {
+function renderUI({ boardOptions, currentBoard, mappedGroups, columns, columnOptions }) {
 	console.log({ currentBoard });
+	const jsonStrGroup = JSON.stringify(mappedGroups);
+	const jsonStrColumns = JSON.stringify(columns);
+
+	const boardData = boardOptions.find(f => f.value === currentBoard);
+
 	let cardDivider = CardService.newDivider();
 
 	let boardSelector = createBoardSelector();
-	const formAction = CardService.newAction().setFunctionName('handleSaveSettings');
+	const formAction = CardService.newAction()
+		.setFunctionName('handleSaveSettings')
+		.setParameters({ groups: jsonStrGroup, columns: jsonStrColumns, boardData: JSON.stringify(boardData) });
 	const btnSubmit = CardService.newTextButton()
 		.setText('Submit')
 		.setOnClickAction(formAction)
@@ -71,41 +78,40 @@ function renderUI({ boardOptions, currentBoard, columns, columnOptions }) {
 			numberColumns
 		} = columnOptions;
 		for (let col of columns) {
-			const { title } = col;
 			if (col.type === DATE) {
-				const cols = createColumnSelector(dateColumns, title);
+				const cols = createColumnSelector(dateColumns, col);
 				cardSection.addWidget(cols);
 			}
 			if (col.type === EMAIL) {
-				const cols = createColumnSelector(emailColumns, title);
+				const cols = createColumnSelector(emailColumns, col);
 				cardSection.addWidget(cols);
 			}
 			if (col.type === LINK) {
-				const cols = createColumnSelector(linkColumns, title);
+				const cols = createColumnSelector(linkColumns, col);
 				cardSection.addWidget(cols);
 			}
 			if (col.type === PERSON) {
-				const cols = createColumnSelector(personColumns, title);
+				const cols = createColumnSelector(personColumns, col);
 				cardSection.addWidget(cols);
 			}
 			if (col.type === PHONE) {
-				const cols = createColumnSelector(phoneColumns, title);
+				const cols = createColumnSelector(phoneColumns, col);
 				cardSection.addWidget(cols);
 			}
 			if (col.type === COLOR) {
-				const cols = createColumnSelector(statusColumns, title);
+				const cols = createColumnSelector(statusColumns, col);
 				cardSection.addWidget(cols);
 			}
 			if (col.type === DROPDOWN) {
-				const cols = createColumnSelector(dropdownColumns, title);
+				const cols = createColumnSelector(dropdownColumns, col);
 				cardSection.addWidget(cols);
 			}
 			if (col.type === TEXT) {
-				const cols = createColumnSelector(textColumns, title);
+				const cols = createColumnSelector(textColumns, col);
 				cardSection.addWidget(cols);
 			}
 			if (col.type === NUMBERS) {
-				const cols = createColumnSelector(numberColumns, title);
+				const cols = createColumnSelector(numberColumns, col);
 				cardSection.addWidget(cols);
 			}
 		}

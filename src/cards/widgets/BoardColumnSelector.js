@@ -1,10 +1,10 @@
 import { SELECT_NULL } from '../../constants';
 
-export default function BoardColumnSelector(options, title) {
+export default function BoardColumnSelector(options, col) {
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
-		.setTitle(title)
-		.setFieldName('id');
+		.setTitle(col.title)
+		.setFieldName(col.id);
 
 	if (options.length) {
 		dropdown.addItem('--Select--', SELECT_NULL, false);
