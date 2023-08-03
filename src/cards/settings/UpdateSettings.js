@@ -10,7 +10,7 @@ import { extractColumnsForEachField } from '../../utils/misc';
 
 const { NAME, EMAIL, PERSON, PHONE, LINK, COLOR, DROPDOWN, DATE, TEXT, NUMBERS } = BOARD_COLUMNS;
 
-export default function UpdateSettingsCard({ currentBoard }) {
+export default function UpdateSettingsCard({ currentBoard, existingAllowedFields }) {
 	try {
 		// Fetch boards by userID
 		const { id } = getCurrentAccount();
@@ -22,13 +22,20 @@ export default function UpdateSettingsCard({ currentBoard }) {
 		const found = mappedColumns.find(f => f.boardId === currentBoard);
 		const columnOptions = extractColumnsForEachField(found);
 
-		return renderUI({ boardOptions, columnOptions, currentBoard, mappedGroups, columns: found?.columns || [] });
+		return renderUI({
+			boardOptions,
+			columnOptions,
+			currentBoard,
+			mappedGroups,
+			existingAllowedFields,
+			columns: found?.columns || []
+		});
 	} catch (err) {
 		console.log('UpdateSettingsCardErr=>', err);
 	}
 }
 
-function renderUI({ boardOptions, currentBoard, mappedGroups, columns, columnOptions }) {
+function renderUI({ boardOptions, currentBoard, mappedGroups, columns, columnOptions, existingAllowedFields }) {
 	console.log({ currentBoard });
 	const jsonStrGroup = JSON.stringify(mappedGroups);
 	const jsonStrColumns = JSON.stringify(columns);
@@ -75,39 +82,39 @@ function renderUI({ boardOptions, currentBoard, mappedGroups, columns, columnOpt
 		} = columnOptions;
 		for (let col of columns) {
 			if (col.type === DATE) {
-				const cols = createColumnSelector(dateColumns, col);
+				const cols = createColumnSelector({ options: dateColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 			if (col.type === EMAIL) {
-				const cols = createColumnSelector(emailColumns, col);
+				const cols = createColumnSelector({ options: emailColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 			if (col.type === LINK) {
-				const cols = createColumnSelector(linkColumns, col);
+				const cols = createColumnSelector({ options: linkColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 			if (col.type === PERSON) {
-				const cols = createColumnSelector(personColumns, col);
+				const cols = createColumnSelector({ options: personColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 			if (col.type === PHONE) {
-				const cols = createColumnSelector(phoneColumns, col);
+				const cols = createColumnSelector({ options: phoneColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 			if (col.type === COLOR) {
-				const cols = createColumnSelector(statusColumns, col);
+				const cols = createColumnSelector({ options: statusColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 			if (col.type === DROPDOWN) {
-				const cols = createColumnSelector(dropdownColumns, col);
+				const cols = createColumnSelector({ options: dropdownColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 			if (col.type === TEXT) {
-				const cols = createColumnSelector(textColumns, col);
+				const cols = createColumnSelector({ options: textColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 			if (col.type === NUMBERS) {
-				const cols = createColumnSelector(numberColumns, col);
+				const cols = createColumnSelector({ options: numberColumns, col, existingAllowedFields });
 				cardSection.addWidget(cols);
 			}
 		}

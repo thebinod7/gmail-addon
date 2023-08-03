@@ -22,7 +22,13 @@ import {
 	listItemUpdates,
 	updateConnectColumns
 } from './services/monday';
-import { getBoardItemByEmail, fetchGmailSettings, upsertBoardItemByEmail, saveCRMSettings } from './services/offsite';
+import {
+	getBoardItemByEmail,
+	fetchGmailSettings,
+	upsertBoardItemByEmail,
+	saveCRMSettings,
+	getCRMSettingsByAccountId
+} from './services/offsite';
 import {
 	extractEmailAddress,
 	findEmailInBoardRow,
@@ -297,10 +303,14 @@ function handleSettingIconClick() {
 }
 
 function handleMondayBoardChange(e) {
+	let existingAllowedFields = [];
 	const obj = e.commonEventObject;
 	const boardIds = obj.formInputs.selectedMondayBoard.stringInputs?.value || [];
 	const boardId = boardIds.length ? boardIds[0] : null;
-	return UpdateSettingsCard({ currentBoard: boardId });
+	// If settings exist send columns as well
+	const exist = getCRMSettingsByAccountId();
+	if (exist.data && boardId === exist.data.board.value) existingAllowedFields = exist.data.allowedFields;
+	return UpdateSettingsCard({ currentBoard: boardId, existingAllowedFields });
 }
 
 function handleAddConnectItemClick(e) {

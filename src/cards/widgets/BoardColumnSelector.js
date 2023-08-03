@@ -1,10 +1,6 @@
 import { SELECT_NULL } from '../../constants';
-import { getSettingsAllowedFields } from '../../utils/localStorage';
 
-export default function BoardColumnSelector(options, col) {
-	const allowed = getSettingsAllowedFields();
-	console.log('ALLOWED==>', allowed);
-
+export default function BoardColumnSelector({ options, col, existingAllowedFields = [] }) {
 	let dropdown = CardService.newSelectionInput()
 		.setType(CardService.SelectionInputType.DROPDOWN)
 		.setTitle(col.title)
@@ -13,7 +9,7 @@ export default function BoardColumnSelector(options, col) {
 	if (options.length) {
 		dropdown.addItem('--Select--', SELECT_NULL, false);
 		for (let b of options) {
-			const found = allowed.find(a => a.id === col.id);
+			const found = existingAllowedFields.find(a => a.id === col.id);
 			const selected = found ? true : false;
 			dropdown.addItem(b.label, b.id, selected);
 		}

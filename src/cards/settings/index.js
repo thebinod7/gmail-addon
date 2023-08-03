@@ -8,24 +8,21 @@ import { getCRMSettingsByAccountId } from '../../services/offsite';
 import UpdateSettingsCard from './UpdateSettings';
 
 import { SELECT_NULL } from '../../constants';
-import { saveSettingsAllowedFields, deleteSettingsAllowedFields } from '../../utils/localStorage';
 
 export default function SettingsCard() {
 	try {
-		const { id, account } = getCurrentAccount();
+		const { id } = getCurrentAccount();
 		const { data } = fetchBoardItems();
 		const { boards } = filterBoardByUser(id, data);
 		const filteredBoards = filterSubitemBoards(boards);
 		const { boardOptions } = mapBoardColumnsAndSelectOptions(filteredBoards);
 
-		const exist = getCRMSettingsByAccountId(account.id);
+		const exist = getCRMSettingsByAccountId();
 		if (exist && exist.data) {
 			const { board, allowedFields } = exist.data;
-			saveSettingsAllowedFields(allowedFields);
-			return UpdateSettingsCard({ currentBoard: board.value });
+			return UpdateSettingsCard({ currentBoard: board.value, existingAllowedFields: allowedFields });
 		}
 
-		deleteSettingsAllowedFields();
 		return newSettingsCard({ boardOptions });
 	} catch (err) {
 		console.log('SettingsCardErr=>', err);
