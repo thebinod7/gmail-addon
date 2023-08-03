@@ -1,8 +1,21 @@
 import { fetchColumnValues } from '../services/monday';
-import { BOARD_COLUMNS } from '../constants';
+import { BOARD_COLUMNS, SELECT_NULL } from '../constants';
 
 const { RATING, EMAIL, PERSON, PHONE, LINK, COLOR, DROPDOWN, DATE, FILES, TEXT, NUMBERS, LOOKUP, BOARD_RELATION } =
 	BOARD_COLUMNS;
+
+export const getSelectedColumnsOnly = (columns, formInputs) => {
+	const result = [];
+	for (let c of columns) {
+		const current = formInputs[c.id];
+		if (current && current.stringInputs) {
+			const { value = [] } = current.stringInputs;
+			const hasNull = value.includes(SELECT_NULL);
+			if (!hasNull) result.push(c);
+		}
+	}
+	return result;
+};
 
 export const appendConnectColumn = (payloadColumns, boardColumns) => {
 	const connectColumns = boardColumns.filter(f => f.type === BOARD_RELATION);

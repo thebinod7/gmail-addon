@@ -1,25 +1,19 @@
 import { fetchBoardItems } from '../../services/monday';
 import { getCurrentAccount } from '../../utils/localStorage';
-import { filterBoardByUser, mapGroupsByBoard, filterSubitemBoards, mapBoardColumnsAndSelectOptions } from '../../utils';
+import { filterBoardByUser, filterSubitemBoards, mapBoardColumnsAndSelectOptions } from '../../utils';
 
 import createHeaderTxt from './HeaderText';
 import createBoardSelector from './BoardSelector';
 
+import { SELECT_NULL } from '../../constants';
+
 export default function SettingsCard() {
 	try {
-		// Fetch boards by userID
 		const { id } = getCurrentAccount();
 		const { data } = fetchBoardItems();
 		const { boards } = filterBoardByUser(id, data);
-		const mappedGroups = mapGroupsByBoard(boards);
 		const filteredBoards = filterSubitemBoards(boards);
-		const { mappedColumns, boardOptions } = mapBoardColumnsAndSelectOptions(filteredBoards);
-		console.log('MappedCols=>', mappedColumns);
-		console.log('BoardOpts==>', boardOptions);
-		// Render board select DROPDOWN
-		// Fetch settings by accountID
-		// If settings exist => Render form with selectors
-		// If board selected => Render fields with selectors
+		const { boardOptions } = mapBoardColumnsAndSelectOptions(filteredBoards);
 		return newSettingsCard({ boardOptions });
 	} catch (err) {
 		console.log('SettingsCardErr=>', err);
@@ -32,6 +26,7 @@ function newSettingsCard({ boardOptions }) {
 	let selectInput = createBoardSelector();
 
 	if (boardOptions.length) {
+		selectInput.addItem('--Select--', SELECT_NULL, true);
 		for (let b of boardOptions) {
 			selectInput.addItem(b.label, b.value.toString(), false);
 		}

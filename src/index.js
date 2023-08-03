@@ -52,7 +52,7 @@ import {
 	saveCurrentAccount
 } from './utils/localStorage';
 
-import { appendConnectColumn } from './utils/misc';
+import { appendConnectColumn, getSelectedColumnsOnly } from './utils/misc';
 import Notify from './cards/widgets/Notify';
 import { BOARD_COLUMNS, SELECT_NULL, DEFUALT_FIELDS } from './constants';
 
@@ -333,20 +333,6 @@ function handleSaveConnectBoardItem(e) {
 	}
 }
 
-function getSelectedColumnsOnly(columns, formInputs) {
-	const result = [];
-	for (let c of columns) {
-		const current = formInputs[c.id];
-		if (current && current.stringInputs) {
-			const { value = [] } = current.stringInputs;
-			const hasNull = value.includes(SELECT_NULL);
-			if (!hasNull) result.push(c);
-		}
-	}
-	return result;
-}
-
-// TODO: Require name and email fields
 function handleSaveSettings(e) {
 	try {
 		const { account } = getCurrentAccount();
@@ -360,6 +346,9 @@ function handleSaveSettings(e) {
 		const selectedCols = getSelectedColumnsOnly(jsonColumns, formInputs);
 		const connectColumsAdded = appendConnectColumn(selectedCols, jsonColumns);
 		const allColumns = [...connectColumsAdded, ...DEFUALT_FIELDS];
+		const emailField = allColumns.find(f => f.type === EMAIL);
+		if (!emailField) return Notify({ message: 'Email field is required!' });
+
 		const currentGroup = jsonGroups.find(j => j.boardId === jsonBoardData.value);
 		const payload = {
 			serviceName: GMAIL_SERVICE,
@@ -369,8 +358,7 @@ function handleSaveSettings(e) {
 			group: currentGroup.groupId,
 			allowedFields: allColumns // id,type,title,settings_str
 		};
-		console.log('Payload==>', payload);
-		//saveCRMSettings(payload);
+		saveCRMSettings(payload);
 		return Notify({ message: 'Settings saved successfully!' });
 	} catch (err) {
 		console.log('SaveSettingsErrr:', err);
