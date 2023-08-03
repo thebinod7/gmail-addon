@@ -1,6 +1,8 @@
 const OFFSITE_API_SECRET = process.env.OFFSITE_API_SECRET;
 const OFFSITE_API_ENDPOINT = process.env.OFFSITE_ENDPOINT;
 
+import { GMAIL } from '../constants';
+
 export const getBoardItemByEmail = email => {
 	const headers = {
 		apisecret: OFFSITE_API_SECRET,
@@ -13,6 +15,22 @@ export const getBoardItemByEmail = email => {
 		headers: headers
 	};
 	const backendUrl = OFFSITE_API_ENDPOINT + '/api/v1/board-items/email/' + email;
+	const res = UrlFetchApp.fetch(backendUrl, options);
+	return JSON.parse(res);
+};
+
+export const getCRMSettingsByAccountId = accountId => {
+	const headers = {
+		apisecret: OFFSITE_API_SECRET,
+		'Content-Type': 'application/json'
+	};
+	const options = {
+		method: 'get',
+		contentType: 'application/json',
+		muteHttpExceptions: true,
+		headers: headers
+	};
+	const backendUrl = `${OFFSITE_API_ENDPOINT}/api/v1/crm-settings/${accountId}/account/${GMAIL.FORM_NAME}`;
 	const res = UrlFetchApp.fetch(backendUrl, options);
 	return JSON.parse(res);
 };

@@ -21,6 +21,10 @@ module.exports = {
 		CONTACT: 'Contact',
 		UPDATES: 'Updates'
 	},
+	GMAIL: {
+		SERVICE_NAME: 'Gmail',
+		FORM_NAME: 'Gmail Contact'
+	},
 	DEFUALT_FIELDS: [{ id: 'name', type: 'name', title: 'Item Name' }],
 	BOARD_COLUMNS: BOARD_COLUMNS_MAPPING,
 	SAMPLE_DATA: [

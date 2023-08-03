@@ -10,6 +10,23 @@ export const getAllowedFields = () => {
 	return JSON.parse(data);
 };
 
+export const saveSettingsAllowedFields = data => {
+	const properties = PropertiesService.getUserProperties();
+	properties.setProperty('allowedFields', JSON.stringify(data));
+};
+
+export const getSettingsAllowedFields = () => {
+	const properties = PropertiesService.getUserProperties();
+	const data = properties.getProperty('allowedFields');
+	if (!data) return [];
+	return JSON.parse(data);
+};
+
+export const deleteSettingsAllowedFields = () => {
+	const properties = PropertiesService.getUserProperties();
+	return properties.deleteProperty('allowedFields');
+};
+
 export const saveColumStrSettings = data => {
 	const properties = PropertiesService.getUserProperties();
 	properties.setProperty('columnStr', JSON.stringify(data));

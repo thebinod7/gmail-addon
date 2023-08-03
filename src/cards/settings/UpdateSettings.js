@@ -22,10 +22,6 @@ export default function UpdateSettingsCard({ currentBoard }) {
 		const found = mappedColumns.find(f => f.boardId === currentBoard);
 		const columnOptions = extractColumnsForEachField(found);
 
-		// Render board select DROPDOWN
-		// Fetch settings by accountID
-		// If settings exist => Render form  fields with selectors
-		// If board selected => Render form fields with selectors
 		return renderUI({ boardOptions, columnOptions, currentBoard, mappedGroups, columns: found?.columns || [] });
 	} catch (err) {
 		console.log('UpdateSettingsCardErr=>', err);

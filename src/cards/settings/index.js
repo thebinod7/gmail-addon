@@ -4,16 +4,28 @@ import { filterBoardByUser, filterSubitemBoards, mapBoardColumnsAndSelectOptions
 
 import createHeaderTxt from './HeaderText';
 import createBoardSelector from './BoardSelector';
+import { getCRMSettingsByAccountId } from '../../services/offsite';
+import UpdateSettingsCard from './UpdateSettings';
 
 import { SELECT_NULL } from '../../constants';
+import { saveSettingsAllowedFields, deleteSettingsAllowedFields } from '../../utils/localStorage';
 
 export default function SettingsCard() {
 	try {
-		const { id } = getCurrentAccount();
+		const { id, account } = getCurrentAccount();
 		const { data } = fetchBoardItems();
 		const { boards } = filterBoardByUser(id, data);
 		const filteredBoards = filterSubitemBoards(boards);
 		const { boardOptions } = mapBoardColumnsAndSelectOptions(filteredBoards);
+
+		const exist = getCRMSettingsByAccountId(account.id);
+		if (exist && exist.data) {
+			const { board, allowedFields } = exist.data;
+			saveSettingsAllowedFields(allowedFields);
+			return UpdateSettingsCard({ currentBoard: board.value });
+		}
+
+		deleteSettingsAllowedFields();
 		return newSettingsCard({ boardOptions });
 	} catch (err) {
 		console.log('SettingsCardErr=>', err);

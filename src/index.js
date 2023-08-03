@@ -54,14 +54,12 @@ import {
 
 import { appendConnectColumn, getSelectedColumnsOnly } from './utils/misc';
 import Notify from './cards/widgets/Notify';
-import { BOARD_COLUMNS, SELECT_NULL, DEFUALT_FIELDS } from './constants';
+import { BOARD_COLUMNS, GMAIL, DEFUALT_FIELDS } from './constants';
 
 const MONDAY_AUTH_URL = process.env.MONDAY_AUTH_URL;
 const MONDAY_CLIENT_ID = process.env.APP_CLIENT_ID;
 const MONDAY_CLIENT_SECRET = process.env.CLIENT_SECRET;
 const MONDAT_ACCESS_TOKEN_URL = process.env.ACCESS_TOKEN_ENDPOINT;
-const GMAIL_SERVICE = 'Gmail';
-const GMAIL_CONTACT = 'Gmail Contact';
 
 const { NAME, EMAIL, BOARD_RELATION } = BOARD_COLUMNS;
 const FIRST_GROUP = 'topics';
@@ -351,9 +349,9 @@ function handleSaveSettings(e) {
 
 		const currentGroup = jsonGroups.find(j => j.boardId === jsonBoardData.value);
 		const payload = {
-			serviceName: GMAIL_SERVICE,
+			serviceName: GMAIL.SERVICE_NAME,
 			accountId: account.id,
-			formName: GMAIL_CONTACT,
+			formName: GMAIL.FORM_NAME,
 			board: jsonBoardData,
 			group: currentGroup.groupId,
 			allowedFields: allColumns // id,type,title,settings_str
