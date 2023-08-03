@@ -3,6 +3,5 @@ Input validations
 
 # Add/Update settings:
 
--   Handle role access
 -   Handle board subscriber avail
 -   Validate invalid column select

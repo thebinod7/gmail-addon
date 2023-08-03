@@ -220,7 +220,7 @@ export const fetchMondayAccessToken = code => {
 
 export const fetchMondayAccountDetails = () => {
 	const accessToken = getToken();
-	const query = 'query { me {name id  account{id name slug}}}';
+	const query = 'query { me {name id  is_admin account{id name slug}}}';
 	const headers = {
 		Authorization: accessToken,
 		'Content-Type': 'application/json'

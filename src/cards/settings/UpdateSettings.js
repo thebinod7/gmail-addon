@@ -12,7 +12,7 @@ const { EMAIL, PERSON, PHONE, LINK, COLOR, DROPDOWN, DATE, TEXT, NUMBERS } = BOA
 
 export default function UpdateSettingsCard({ currentBoard, existingAllowedFields }) {
 	try {
-		const { id } = getCurrentAccount();
+		const { id, is_admin } = getCurrentAccount();
 		const { data } = fetchBoardItems();
 		const { boards } = filterBoardByUser(id, data);
 		const mappedGroups = mapGroupsByBoard(boards);
@@ -27,15 +27,23 @@ export default function UpdateSettingsCard({ currentBoard, existingAllowedFields
 			currentBoard,
 			mappedGroups,
 			existingAllowedFields,
-			columns: found?.columns || []
+			columns: found?.columns || [],
+			is_admin
 		});
 	} catch (err) {
 		console.log('UpdateSettingsCardErr=>', err);
 	}
 }
 
-function renderUI({ boardOptions, currentBoard, mappedGroups, columns, columnOptions, existingAllowedFields }) {
-	console.log({ currentBoard });
+function renderUI({
+	boardOptions,
+	columnOptions,
+	currentBoard,
+	mappedGroups,
+	existingAllowedFields,
+	columns,
+	is_admin
+}) {
 	const jsonStrGroup = JSON.stringify(mappedGroups);
 	const jsonStrColumns = JSON.stringify(columns);
 
@@ -43,13 +51,16 @@ function renderUI({ boardOptions, currentBoard, mappedGroups, columns, columnOpt
 
 	let cardDivider = CardService.newDivider();
 
-	let boardSelector = createBoardSelector();
+	let boardSelector = createBoardSelector({ is_admin });
 	const formAction = CardService.newAction()
 		.setFunctionName('handleSaveSettings')
 		.setParameters({ groups: jsonStrGroup, columns: jsonStrColumns, boardData: JSON.stringify(boardData) });
+
+	const btnDisabled = is_admin ? false : true;
 	const btnSubmit = CardService.newTextButton()
 		.setText('Submit')
 		.setOnClickAction(formAction)
+		.setDisabled(btnDisabled)
 		.setTextButtonStyle(CardService.TextButtonStyle.FILLED);
 
 	if (boardOptions.length) {
@@ -62,7 +73,6 @@ function renderUI({ boardOptions, currentBoard, mappedGroups, columns, columnOpt
 
 	const text = createHeaderTxt();
 
-	console.log('columns===>', columns);
 	let cardSection = CardService.newCardSection();
 
 	cardSection.addWidget(text).addWidget(cardDivider).addWidget(boardSelector).addWidget(cardDivider);
