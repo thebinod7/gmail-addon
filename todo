@@ -3,10 +3,6 @@ Input validations
 
 # Add/Update settings:
 
--   Fetch settings by accountID
--   Get CRM settings by accountID
--   Populate form with selected data
-
 -   Handle role access
 -   Handle board subscriber avail
 -   Validate invalid column select

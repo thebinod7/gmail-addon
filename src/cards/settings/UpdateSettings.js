@@ -8,11 +8,10 @@ import { SELECT_NULL, BOARD_COLUMNS } from '../../constants';
 import createColumnSelector from '../widgets/BoardColumnSelector';
 import { extractColumnsForEachField } from '../../utils/misc';
 
-const { NAME, EMAIL, PERSON, PHONE, LINK, COLOR, DROPDOWN, DATE, TEXT, NUMBERS } = BOARD_COLUMNS;
+const { EMAIL, PERSON, PHONE, LINK, COLOR, DROPDOWN, DATE, TEXT, NUMBERS } = BOARD_COLUMNS;
 
 export default function UpdateSettingsCard({ currentBoard, existingAllowedFields }) {
 	try {
-		// Fetch boards by userID
 		const { id } = getCurrentAccount();
 		const { data } = fetchBoardItems();
 		const { boards } = filterBoardByUser(id, data);
