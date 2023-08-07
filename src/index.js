@@ -111,14 +111,15 @@ function fetchGmailSenderAndEmail(e) {
 	const thread = GmailApp.getMessageById(messageId).getThread();
 	const threadLink = thread.getPermalink();
 	const messages = thread.getMessages();
-	for (let i = 0; i < messages.length; i++) {
-		let sender = messages[i].getFrom();
-		itemName = extractCharactersBeforeSymbol(sender, '<');
-		let emailAddr = extractEmailAddress(sender);
-		email = emailAddr;
-		emailBody = messages[i].getPlainBody();
-	}
+	const lastMessage = messages[messages.length - 1];
+	const lastSender = lastMessage.getFrom();
+	console.log({ lastSender });
+	itemName = extractCharactersBeforeSymbol(lastSender, '<');
+	let emailAddr = extractEmailAddress(lastSender);
+	email = emailAddr;
+	emailBody = lastMessage.getPlainBody();
 	let scapeDoubleQoutes = itemName.replace(/"/g, '');
+	console.log({ itemName, email });
 	const data = { email, itemName: scapeDoubleQoutes, emailBody, threadLink };
 
 	saveScrapedEmailData(data);
